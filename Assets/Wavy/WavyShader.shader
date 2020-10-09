@@ -6,10 +6,10 @@
         _VertColorAlpha ("Vertex Color Alpha", Range(0, 1)) = 0.05
 
         // -- fields/animation
-        _AnimSpeedX ("Distrotion Speed.X", Range(0, 4)) = 1.3
-        _AnimSpeedY ("Distrotion Speed.Y", Range(0, 4)) = 2.7
+        _AnimSpeedX ("Distrotion Speed.X", Range(0, 4)) = 1.1
+        _AnimSpeedY ("Distrotion Speed.Y", Range(0, 4)) = 1.4
         _AnimAmplitude ("Distortion Amplitude", Range(0, 1)) = 0.03
-        _AnimFrequency ("Distortion Frequency", Range(0, 20)) = 8
+        _AnimFrequency ("Distortion Frequency", Range(0, 20)) = 3
     }
 
     // -- shader --
