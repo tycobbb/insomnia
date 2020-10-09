@@ -1,5 +1,7 @@
 # -- Custom --
+/[Ll]inks/
 /[Aa]ssets/[Ff]onts
+/[Ll]inks/
 
 # -- Unity -- 
 # Created by https://www.toptal.com/developers/gitignore/api/unity
