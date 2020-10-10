@@ -34,8 +34,8 @@
             // -- types --
             struct Vert {
                 float4 pos : POSITION;
-                // float4 tangent : TANGENT;
-                // float3 normal : NORMAL;
+                float4 tangent : TANGENT;
+                float3 normal : NORMAL;
                 // float4 texcoord : TEXCOORD0;
                 // float4 texcoord1 : TEXCOORD1;
                 // float4 texcoord2 : TEXCOORD2;
@@ -64,6 +64,12 @@
             // -- impls --
             Frag RenderVert (Vert v) {
                 Frag f;
+                // f.color = sin(3 * v.pos.y + _Time.z) * 0.5 + 0.5;
+                // v.pos.xyz += v.normal * (sin(5 * v.pos.y + _Time.z) * 0.5 + 0.5) * 0.01;
+                // v.pos.xyz += v.normal * (sin(v.pos.y + _Time.z) * 0.5 + 0.5) * 0.01;
+                // v.pos.xyz += (v.normal * (sin(v.pos.y + _Time.y) * 0.5 + 0.5)) * 0.01;
+                // f.pos = UnityObjectToClipPos(v.pos);
+
                 v.pos.x += sin((v.pos.x + v.pos.y) * _AnimFrequency + _Time.y * _AnimSpeedX) * _AnimAmplitude;
                 v.pos.y += cos((v.pos.x - v.pos.y) * _AnimFrequency + _Time.y * _AnimSpeedY) * _AnimAmplitude;
 
