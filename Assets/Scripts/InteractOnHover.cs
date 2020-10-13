@@ -53,6 +53,9 @@ public class InteractOnHover: MonoBehaviour {
             }
         }
 
+        if (mIsVisible && Input.GetMouseButtonDown(0)) {
+            Debug.LogFormat("Time to '{0}'", fPrompt);
+        }
     }
 
     // -- commands --
@@ -66,6 +69,38 @@ public class InteractOnHover: MonoBehaviour {
             yield return Animate(FadePrompt(from: 1.0f, to: 0.0f));
             mPrompt.SetActive(false);
         }
+    }
+
+    // -- queries --
+    private bool IsInView() {
+        var camera = MainCamera();
+        var screen = camera.WorldToScreenPoint(transform.position);
+
+        // check if were behind camera
+        if (screen.z < 0) {
+            return false;
+        }
+
+        // check if were in frame
+        if (!Screen.safeArea.Contains(screen)) {
+            return false;
+        }
+
+        // check if the a spherecast hits this object
+        var hits = Physics.SphereCastAll(
+            camera.transform.position,
+            fRadius,
+            camera.transform.forward,
+            fMinDistance
+        );
+
+        foreach (var hit in hits) {
+            if (hit.transform == transform) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     // -- animations --
@@ -116,37 +151,6 @@ public class InteractOnHover: MonoBehaviour {
                 material.color = material.color.WithAlpha(alpha);
             }
         }
-    }
-
-    private bool IsInView() {
-        var camera = MainCamera();
-        var screen = camera.WorldToScreenPoint(transform.position);
-
-        // check if were behind camera
-        if (screen.z < 0) {
-            return false;
-        }
-
-        // check if were in frame
-        if (!Screen.safeArea.Contains(screen)) {
-            return false;
-        }
-
-        // check if the a spherecast hits this object
-        var hits = Physics.SphereCastAll(
-            camera.transform.position,
-            fRadius,
-            camera.transform.forward,
-            fMinDistance
-        );
-
-        foreach (var hit in hits) {
-            if (hit.transform == transform) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     // -- accessors --
