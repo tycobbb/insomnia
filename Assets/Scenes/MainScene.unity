@@ -2540,6 +2540,8 @@ GameObject:
   - component: {fileID: 57929369927918949}
   - component: {fileID: 3071352640620327333}
   - component: {fileID: 2953066730539953083}
+  - component: {fileID: 987186621365290524}
+  - component: {fileID: 987186621365290525}
   m_Layer: 0
   m_Name: Rival
   m_TagString: Untagged
