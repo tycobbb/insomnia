@@ -28,7 +28,13 @@ public class InteractOnHover: MonoBehaviour {
 
     // -- lifecycle --
     void Start() {
+        if (GetComponent<Collider>() == null) {
+            Debug.LogWarningFormat("InteractOnHover requires a collider on {0}", this);
+        }
+
+        // create an inactive prompt with the correct text
         mPrompt = Instantiate(LoadPrefab(), transform);
+        mPrompt.SetActive(mIsVisible);
         mPrompt.GetComponent<TextMeshPro>().text = fPrompt;
     }
 
