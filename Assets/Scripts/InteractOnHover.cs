@@ -2,6 +2,7 @@
 using UnityEngine;
 using TMPro;
 
+[RequireComponent(typeof(Collider))]
 public class InteractOnHover: MonoBehaviour {
     // -- constants --
     private const float kFadeDuration = 0.2f;
@@ -28,10 +29,6 @@ public class InteractOnHover: MonoBehaviour {
 
     // -- lifecycle --
     void Start() {
-        if (GetComponent<Collider>() == null) {
-            Debug.LogWarningFormat("InteractOnHover requires a collider on {0}", this);
-        }
-
         // create an inactive prompt with the correct text
         mPrompt = Instantiate(LoadPrefab(), transform);
         mPrompt.SetActive(mIsVisible);
@@ -82,17 +79,17 @@ public class InteractOnHover: MonoBehaviour {
         var camera = MainCamera();
         var screen = camera.WorldToScreenPoint(transform.position);
 
-        // check if were behind camera
+        // check if we're behind the camera
         if (screen.z < 0) {
             return false;
         }
 
-        // check if were in frame
+        // check if we're in frame
         if (!Screen.safeArea.Contains(screen)) {
             return false;
         }
 
-        // check if the a spherecast hits this object
+        // check if a spherecast hits this object
         var hits = Physics.SphereCastAll(
             camera.transform.position,
             fRadius,
@@ -162,10 +159,6 @@ public class InteractOnHover: MonoBehaviour {
     // -- accessors --
     private Camera MainCamera() {
         return Camera.main;
-    }
-
-    private TextMeshPro TextMesh() {
-        return GetComponent<TextMeshPro>();
     }
 
     // -- factories --
