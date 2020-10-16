@@ -788,6 +788,19 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1687480755}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &424667587
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 424667586}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c670a44f05ff246e39768023bd52b19f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fInventoryPhone: {fileID: 1984741872}
 --- !u!114 &424667594
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -801,7 +814,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fIsLocked: 1
-  fInventoryPhone: {fileID: 0}
 --- !u!1 &676619607
 GameObject:
   m_ObjectHideFlags: 0
@@ -1840,6 +1852,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 970132574}
+  - component: {fileID: 970132575}
   m_Layer: 0
   m_Name: Inventory
   m_TagString: Untagged
@@ -1862,6 +1875,25 @@ Transform:
   m_Father: {fileID: 1133085859}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &970132575
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 970132573}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 5269251fa1f2a4dce8a4c878b0d47037, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &1000835768
 GameObject:
   m_ObjectHideFlags: 0

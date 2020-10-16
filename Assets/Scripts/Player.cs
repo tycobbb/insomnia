@@ -1,14 +1,11 @@
 ﻿using UnityEngine;
 
+[RequireComponent(typeof(Inventory))]
 public class Player: MonoBehaviour {
     // -- fields --
     [SerializeField]
     [Tooltip("Whether the player is locked in place.")]
     private bool fIsLocked = false;
-
-    [SerializeField]
-    [Tooltip("The phone in the player's inventory")]
-    private GameObject fInventoryPhone = null;
 
     // -- props --
     private Vector3 mLockedPosition;
@@ -36,7 +33,7 @@ public class Player: MonoBehaviour {
         Destroy(phone.gameObject);
 
         // and move it to the inventory
-        fInventoryPhone.SetActive(true);
+        Inventory().PickUpPhone();
     }
 
     private void SetLock(bool isLocked) {
@@ -55,6 +52,11 @@ public class Player: MonoBehaviour {
     // -- queries --
     private bool IsLocked() {
         return fIsLocked;
+    }
+
+    // -- dependencies --
+    private Inventory Inventory() {
+        return GetComponent<Inventory>();
     }
 
     // -- module --
