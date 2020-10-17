@@ -41,6 +41,8 @@ Shader "Custom/Cel" {
                 "LightMode" = "ForwardAdd"
             }
 
+            Blend SrcAlpha OneMinusSrcAlpha
+
             CGPROGRAM
             // -- config --
             #pragma multi_compile_fwdadd_fullshadows
