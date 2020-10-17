@@ -4,11 +4,12 @@
 // -- includes --
 #include "UnityCG.cginc"
 #include "Lighting.cginc"
+#include "UnityPBSLighting.cginc"
 #include "AutoLight.cginc"
 
 // -- types --
 struct Vert {
-    float4 pos : POSITION;
+    float4 vertex : POSITION;
     float3 normal : NORMAL;
 };
 
@@ -17,7 +18,7 @@ struct Frag {
     float3 normal : NORMAL;
     float3 view : TEXCOORD1;
     float3 world : TEXCOORD2;
-    SHADOW_COORDS(2)
+    SHADOW_COORDS(3)
 };
 
 // -- props --
@@ -32,17 +33,17 @@ float _RimAmount;
 float _RimThreshold;
 
 // -- impls --
-Frag RenderVert (Vert v) {
+Frag RenderVert(Vert v) {
     Frag f;
-    f.pos = UnityObjectToClipPos(v.pos);
-    f.world = mul(unity_ObjectToWorld, v.pos);
+    f.pos = UnityObjectToClipPos(v.vertex);
+    f.world = mul(unity_ObjectToWorld, v.vertex);
     f.view = UnityWorldSpaceViewDir(f.world);
     f.normal = UnityObjectToWorldNormal(v.normal);
     TRANSFER_SHADOW(f);
     return f;
 }
 
-fixed4 RenderFrag (Frag f) : SV_Target {
+fixed4 RenderFrag(Frag f) : SV_Target {
 #ifdef DIRECTIONAL
     float3 iLight = _WorldSpaceLightPos0.xyz;
 #else

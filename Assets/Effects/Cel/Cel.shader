@@ -43,9 +43,9 @@ Shader "Custom/Cel" {
 
             CGPROGRAM
             // -- config --
+            #pragma multi_compile_fwdadd_fullshadows
             #pragma vertex RenderVert
             #pragma fragment RenderFrag
-            #pragma multi_compile_fwdadd
 
             // -- includes --
             #include "CelLight.cginc"
@@ -54,6 +54,6 @@ Shader "Custom/Cel" {
         }
 
         // use built-in cast shadows
-        UsePass "Legacy Shaders/VertexLit/SHADOWCASTER"
+        UsePass "VertexLit/SHADOWCASTER"
     }
 }
