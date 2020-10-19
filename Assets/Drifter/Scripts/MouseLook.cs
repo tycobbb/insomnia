@@ -29,6 +29,9 @@ public class MouseLook : MonoBehaviour
     float rotationX = 0F;
     float rotationY = 0F;
 
+    float offsetX = 0F;
+    float offsetY = 0F;
+
     private List<float> rotArrayX = new List<float>();
     float rotAverageX = 0F;
 
@@ -67,6 +70,7 @@ public class MouseLook : MonoBehaviour
             }
 
             rotationX += mouse * sensitivityX * Time.timeScale;
+            Debug.LogFormat("rotationX {0}", rotationX);
 
             rotArrayX.Add(rotationX);
 
@@ -81,7 +85,7 @@ public class MouseLook : MonoBehaviour
             rotAverageX /= rotArrayX.Count;
             rotAverageX = ClampAngle(rotAverageX, minimumX, maximumX);
 
-            Quaternion xQuaternion = Quaternion.AngleAxis (rotAverageX, Vector3.up);
+            Quaternion xQuaternion = Quaternion.AngleAxis (rotAverageX - offsetX, Vector3.up);
             transform.localRotation = originalRotation * xQuaternion;
         }
         else
@@ -116,9 +120,17 @@ public class MouseLook : MonoBehaviour
             }
             rotAverageY /= rotArrayY.Count;
 
-            Quaternion yQuaternion = Quaternion.AngleAxis (rotAverageY, Vector3.left);
+            Quaternion yQuaternion = Quaternion.AngleAxis (rotAverageY - offsetY, Vector3.left);
             transform.localRotation = originalRotation * yQuaternion;
         }
+    }
+
+    public void Rotate(Quaternion rotation) {
+        originalRotation = rotation;
+        offsetX = rotationX;
+        offsetY = rotationY;
+        rotArrayX.Clear();
+        rotArrayY.Clear();
     }
 
     public void SetSensitivity(float s)

@@ -56,8 +56,10 @@ namespace Interact {
 
             // notify the target in clicked
             if (mIsVisible && Input.GetMouseButtonDown(0)) {
-                var target = GetComponent<Target>();
-                target.OnInteract();
+                GetComponent<Target>().OnInteract();
+
+                // and disable this component
+                this.enabled = false;
             }
         }
 
