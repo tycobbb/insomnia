@@ -10,6 +10,7 @@ public class Game: MonoBehaviour {
         Foot,
         Door,
         Sheep,
+        Sleep,
     }
 
     // -- model --
@@ -63,6 +64,11 @@ public class Game: MonoBehaviour {
         AdvanceStep();
     }
 
+    public void Pet(Sheep sheep) {
+        mPlayer.PickUp(sheep);
+        AdvanceStep();
+    }
+
     private void AdvanceStep() {
         AdvanceToStep(mStep + 1);
     }
@@ -95,6 +101,8 @@ public class Game: MonoBehaviour {
                 StandUp(); break;
             case Door door:
                 Open(door); break;
+            case Sheep sheep:
+                Pet(sheep); break;
             default:
                 Debug.LogErrorFormat("Interacting with unknown target: {0}", target); break;
         }

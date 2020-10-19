@@ -42,11 +42,9 @@ public class Player: MonoBehaviour {
 
     // -- commands --
     public void PickUp(Phone phone) {
-        // destroy the in-world phone
-        if (phone != null) {
-            // TODO: play "pickup" sound
-            Destroy(phone.gameObject);
-        }
+        // hide the in-world phone
+        // TODO: play "pickup" sound
+        phone.gameObject.SetActive(false);
 
         // and move it to the inventory
         Inventory().PickUpPhone();
@@ -70,6 +68,14 @@ public class Player: MonoBehaviour {
         SetLock(false);
         Warp(fStandLoc.position);
         Look(fStandLoc.rotation);
+    }
+
+    public void PickUp(Sheep sheep) {
+        // hide the in-world sheep
+        sheep.gameObject.SetActive(false);
+
+        // and move it to the inventory
+        Inventory().PickUpSheep();
     }
 
     private void Warp(Vector3 position) {
