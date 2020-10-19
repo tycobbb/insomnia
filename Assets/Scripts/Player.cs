@@ -48,7 +48,9 @@ public class Player: MonoBehaviour {
 
     public void StandUp() {
         // remove sleeping body
-        Destroy(fBody);
+        if (fBody != null) {
+            Destroy(fBody);
+        }
 
         // unlock player and move out of bed
         SetLock(false);

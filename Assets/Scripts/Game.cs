@@ -22,7 +22,7 @@ public class Game: MonoBehaviour {
         _instance = this;
 
         // toggle this line to debug different game states
-        StartCoroutine(DebugSetup());
+        // StartCoroutine(DebugSetup());
     }
 
     private IEnumerator DebugSetup() {
