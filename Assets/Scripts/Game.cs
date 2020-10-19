@@ -20,8 +20,9 @@ public class Game: MonoBehaviour {
     // -- lifecycle --
     protected void Awake() {
         _instance = this;
+
         // toggle this line to debug different game states
-        // StartCoroutine(DebugSetup());
+        StartCoroutine(DebugSetup());
     }
 
     private IEnumerator DebugSetup() {
