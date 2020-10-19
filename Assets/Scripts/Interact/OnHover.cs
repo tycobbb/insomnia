@@ -25,45 +25,49 @@ namespace Interact {
 
         // -- props --
         // private GameObject mPrompt;
-        private bool mIsVisible = false;
+        private bool mIsHovering = false;
         private int mWaitFrame = 0;
         private IEnumerator mAnimation;
 
         // -- lifecycle --
         protected void Start() {
-            fPrompt.SetActive(mIsVisible);
+            fPrompt.SetActive(mIsHovering);
         }
 
         protected void Update() {
-            var isVisible = IsInView();
+            var isHovering = IsHovering();
 
             // if visible, make sure the prompt faces the camera
-            if (isVisible) {
+            if (isHovering) {
                 fPrompt.transform.forward = MainCamera().transform.forward;
             }
 
             // if visibility is the same, tare wait frames
-            if (isVisible == mIsVisible) {
+            if (isHovering == mIsHovering) {
                 mWaitFrame = 0;
             }
             // otherwise, wait a few frames before changing visibility
             else {
                 mWaitFrame++;
                 if (mWaitFrame >= kWaitFrames) {
-                    StartCoroutine(ShowPrompt(isVisible));
+                    StartCoroutine(ShowPrompt(isHovering));
                 }
             }
 
-            // notify the target in clicked
-            if (mIsVisible && Input.GetMouseButtonDown(0)) {
-                var target = GetComponent<Target>();
-                target.OnInteract();
+            // on click (when hovering)
+            if (mIsHovering && Input.GetMouseButtonDown(0)) {
+                // send an event to the game
+                Game.Get().OnInteract(GetComponent<Target>());
+
+                // and disable this component
+                this.enabled = false;
+                StartCoroutine(ShowPrompt(false));
             }
         }
 
         // -- commands --
         private IEnumerator ShowPrompt(bool isVisible) {
-            mIsVisible = isVisible;
+            mIsHovering = isVisible;
 
             if (isVisible) {
                 fPrompt.SetActive(true);
@@ -75,7 +79,7 @@ namespace Interact {
         }
 
         // -- queries --
-        private bool IsInView() {
+        private bool IsHovering() {
             var camera = MainCamera();
             var screen = camera.WorldToScreenPoint(transform.position);
 
