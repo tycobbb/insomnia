@@ -2,7 +2,7 @@
 
 public class Inventory: MonoBehaviour {
     // -- constants --
-    private const string kShowPhone = "ShowPhone";
+    private const string kShowPhoneAnim = "ShowPhone";
 
     // -- fields --
     [SerializeField]
@@ -12,7 +12,7 @@ public class Inventory: MonoBehaviour {
     // -- comands --
     public void PickUpPhone() {
         fInventoryPhone.SetActive(true);
-        Animator().Play(kShowPhone);
+        Animator().Play(kShowPhoneAnim);
     }
 
     // -- dependencies --

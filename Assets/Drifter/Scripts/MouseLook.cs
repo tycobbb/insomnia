@@ -70,7 +70,6 @@ public class MouseLook : MonoBehaviour
             }
 
             rotationX += mouse * sensitivityX * Time.timeScale;
-            Debug.LogFormat("rotationX {0}", rotationX);
 
             rotArrayX.Add(rotationX);
 

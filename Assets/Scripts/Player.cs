@@ -37,8 +37,10 @@ public class Player: MonoBehaviour {
     // -- commands --
     public void PickUp(Phone phone) {
         // destroy the in-world phone
-        // TODO: play "pickup" sound
-        Destroy(phone.gameObject);
+        if (phone != null) {
+            // TODO: play "pickup" sound
+            Destroy(phone.gameObject);
+        }
 
         // and move it to the inventory
         Inventory().PickUpPhone();

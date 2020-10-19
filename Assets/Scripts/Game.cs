@@ -9,6 +9,7 @@ public class Game: MonoBehaviour {
         Phone,
         Foot,
         Door,
+        Sheep,
     }
 
     // -- model --
@@ -19,6 +20,14 @@ public class Game: MonoBehaviour {
     // -- lifecycle --
     protected void Awake() {
         _instance = this;
+        // toggle this line to debug different game states
+        // StartCoroutine(DebugSetup());
+    }
+
+    private IEnumerator DebugSetup() {
+        yield return 0;
+        PickUp(GetComponentInChildren<Phone>());
+        StandUp();
     }
 
     // -- commands --
@@ -36,20 +45,46 @@ public class Game: MonoBehaviour {
         AdvanceStep();
     }
 
-    private void AdvanceStep() {
-        mStep++;
-        mNewStep = mStep;
-        StartCoroutine(ClearNewStep());
+    public void Open(Door door) {
+        door.Open();
+        AdvanceStep();
     }
 
-    private IEnumerator ClearNewStep() {
+    private void AdvanceStep() {
+        AdvanceToStep(mStep + 1);
+    }
+
+    private void AdvanceToStep(Step step) {
+        mStep = step;
+        mNewStep = step;
+        StartCoroutine(ClearNewStep(step));
+    }
+
+    private IEnumerator ClearNewStep(Step step) {
         yield return 0;
-        mNewStep = null;
+
+        if (mNewStep == step) {
+            mNewStep = null;
+        }
     }
 
     // -- queries --
-    public Step? NewStep() {
-        return mNewStep;
+    public bool DidChangeToStep(Step step) {
+        return mNewStep == step;
+    }
+
+    // -- events --
+    public void OnInteract(Interact.Target target) {
+        switch (target) {
+            case Phone phone:
+                PickUp(phone); break;
+            case Foot foot:
+                StandUp(); break;
+            case Door door:
+                Open(door); break;
+            default:
+                Debug.LogErrorFormat("Interacting with unknown target: {0}", target); break;
+        }
     }
 
     // -- module --

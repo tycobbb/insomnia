@@ -3,16 +3,10 @@
 public class Foot: MonoBehaviour, Interact.Target {
     // -- lifecycle --
     protected void Update() {
-        var game = Game.Get();
-
-        // enable hover
-        if (game.NewStep() == Game.Step.Foot) {
-            GetComponent<Interact.OnHover>().enabled = true;
+        // enable hover on foot step
+        if (Game.Get().DidChangeToStep(Game.Step.Foot)) {
+            var hover = GetComponent<Interact.OnHover>();
+            hover.enabled = true;
         }
-    }
-
-    // -- Interact.Target --
-    public void OnInteract() {
-        Game.Get().StandUp();
     }
 }
