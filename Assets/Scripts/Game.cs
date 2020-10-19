@@ -16,10 +16,17 @@ public class Game: MonoBehaviour {
     private Step mStep = Step.Phone;
     private Step? mNewStep = Step.Phone;
     private Player mPlayer;
+    private Bedroom mBedroom;
 
     // -- lifecycle --
     protected void Awake() {
         _instance = this;
+
+    }
+
+    protected void Start() {
+        mBedroom.WarpToSheep();
+        mPlayer.Sleep();
 
         // toggle this line to debug different game states
         // StartCoroutine(DebugSetup());
@@ -31,11 +38,16 @@ public class Game: MonoBehaviour {
         StandUp();
     }
 
-    // -- commands --
-    public void Setup(Player player) {
+    // -- setup --
+    public void Register(Player player) {
         mPlayer = player;
     }
 
+    public void Register(Bedroom bedroom) {
+        mBedroom = bedroom;
+    }
+
+    // -- commands --
     public void PickUp(Phone phone) {
         mPlayer.PickUp(phone);
         AdvanceStep();
