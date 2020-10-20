@@ -27,7 +27,10 @@ public class Game: MonoBehaviour {
 
     protected void Start() {
         mBedroom.WarpToSheep();
-        mPlayer.Sleep();
+
+        if (mPlayer != null) {
+            mPlayer.Sleep();
+        }
 
         // toggle this line to debug different game states
         StartCoroutine(DebugSetup());
