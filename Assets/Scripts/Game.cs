@@ -15,6 +15,12 @@ public class Game: MonoBehaviour {
         Door2 = 1 << 6,
     }
 
+    public enum Room: ushort {
+        Sheep,
+        Kitchen,
+        Hall
+    }
+
     // -- fields --
     [SerializeField]
     [Tooltip("Whether the game is in debug mode.")]
@@ -35,6 +41,7 @@ public class Game: MonoBehaviour {
     // -- model --
     private Step mStep = Step.Phone;
     private Step? mNewStep = Step.Phone;
+    private Room mNextRoom = Room.Sheep;
 
     // -- lifecycle --
     protected void Awake() {
@@ -48,9 +55,8 @@ public class Game: MonoBehaviour {
             return;
         }
 
-        // move room & player to initial position
-        fBedroom.WarpToSheep();
-        fPlayer.Sleep();
+        // move bedroom and player to initial position
+        EnterBedroom();
 
         // run debug setup if enabled
         if (fIsDebug) {
@@ -67,6 +73,23 @@ public class Game: MonoBehaviour {
     }
 
     // -- commands --
+    public void EnterBedroom() {
+        fBedroom.Show();
+
+        // warp bedroom to correct room given game state
+        switch (mNextRoom) {
+            case Room.Sheep:
+                fBedroom.WarpToSheep(); break;
+            case Room.Kitchen:
+                fBedroom.WarpToFood(); break;
+            case Room.Hall:
+                fBedroom.WarpToHall(); break;
+        }
+
+        // reset player to the sleeping pos
+        fPlayer.Sleep();
+    }
+
     public void PickUp(Phone phone) {
         fPlayer.PickUp(phone);
         AdvanceStep();
@@ -82,14 +105,21 @@ public class Game: MonoBehaviour {
         AdvanceStep();
     }
 
+    public void EnterSheepRoom() {
+        fBedroom.CloseDoor();
+        fBedroom.Hide();
+        mNextRoom = Room.Kitchen;
+    }
+
     public void Catch(Sheep sheep) {
         fPlayer.PickUp(sheep);
         AdvanceStep();
     }
 
-    public void EnterOuthouse() {
-        fBedroom.WarpToFood();
-        fPlayer.Sleep();
+    public void EnterKitchen() {
+        fBedroom.CloseDoor();
+        fBedroom.Hide();
+        mNextRoom = Room.Hall;
     }
 
     // -- commands/step

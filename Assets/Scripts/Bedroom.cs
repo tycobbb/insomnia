@@ -4,15 +4,15 @@ public class Bedroom: MonoBehaviour {
     // -- fields --
     [SerializeField]
     [Tooltip("The bedroom door.")]
-    private GameObject fDoor;
+    private Door fDoor;
 
     [SerializeField]
     [Tooltip("The entrance door to the sheep room.")]
     private GameObject fSheepDoor;
 
     [SerializeField]
-    [Tooltip("The entrance door to the food room.")]
-    private GameObject fFoodDoor;
+    [Tooltip("The entrance door to the kitchen.")]
+    private GameObject fKitchenDoor;
 
     // -- lifecycle --
     // to mask out the house
@@ -27,12 +27,27 @@ public class Bedroom: MonoBehaviour {
     // }
 
     // -- commands --
+    public void CloseDoor() {
+        fDoor.Close();
+    }
+
+    public void Hide() {
+        gameObject.SetActive(false);
+    }
+
+    public void Show() {
+        gameObject.SetActive(true);
+    }
+
     public void WarpToSheep() {
         WarpToDoor(fSheepDoor);
     }
 
     public void WarpToFood() {
-        WarpToDoor(fFoodDoor);
+        WarpToDoor(fKitchenDoor);
+    }
+
+    public void WarpToHall() {
     }
 
     private void WarpToDoor(GameObject door) {

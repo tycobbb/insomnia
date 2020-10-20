@@ -13,10 +13,6 @@ public class Door: MonoBehaviour, Interact.Target {
         }
     }
 
-    protected void OnTriggerEnter(Collider closeSwitch) {
-        Close();
-    }
-
     // -- commands --
     public void Open() {
         Animator().Play(kOpenAnim);
