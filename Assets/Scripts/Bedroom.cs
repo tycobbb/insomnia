@@ -15,6 +15,17 @@ public class Bedroom: MonoBehaviour {
         Game.Get().Register(bedroom: this);
     }
 
+    // to mask out the house
+    // protected void Start() {
+    //     var renderers = GetComponentsInChildren<Renderer>();
+
+    //     foreach (var renderer in renderers) {
+    //         if (renderer.material.renderQueue < 2001 && renderer.gameObject != fDoor) {
+    //             renderer.material.renderQueue = 9001;
+    //         }
+    //     }
+    // }
+
     // -- commands --
     public void WarpToSheep() {
         WarpToDoor(fSheepDoor);

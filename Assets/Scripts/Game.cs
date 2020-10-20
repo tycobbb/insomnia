@@ -30,13 +30,15 @@ public class Game: MonoBehaviour {
         mPlayer.Sleep();
 
         // toggle this line to debug different game states
-        // StartCoroutine(DebugSetup());
+        StartCoroutine(DebugSetup());
     }
 
     private IEnumerator DebugSetup() {
         yield return 0;
         PickUp(GetComponentInChildren<Phone>());
         StandUp();
+        Open(GetComponentInChildren<Door>());
+        Pet(GetComponentInChildren<Sheep>());
     }
 
     // -- setup --
@@ -81,7 +83,6 @@ public class Game: MonoBehaviour {
 
     private IEnumerator ClearNewStep(Step step) {
         yield return 0;
-
         if (mNewStep == step) {
             mNewStep = null;
         }
