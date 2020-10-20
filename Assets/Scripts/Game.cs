@@ -27,7 +27,7 @@ public class Game: MonoBehaviour {
 
     protected void Start() {
         // abort game logic if debugging w/ a different drifter
-        if (mPlayer != null) {
+        if (mPlayer == null) {
             return;
         }
 
