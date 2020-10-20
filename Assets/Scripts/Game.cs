@@ -6,12 +6,23 @@ public class Game: MonoBehaviour {
 
     // -- types --
     public enum Step: ushort {
-        Phone,
-        Foot,
-        Door,
-        Sheep,
-        Sleep,
+        Phone = 1 << 0,
+        Foot1 = 1 << 1,
+        Door1 = 1 << 2,
+        Sheep = 1 << 3,
+        Outhouse = 1 << 4,
+        Foot2 = 1 << 5,
+        Door2 = 1 << 6,
     }
+
+    // -- fields --
+    [SerializeField]
+    [Tooltip("Whether the game is in debug mode.")]
+    private bool fIsFree = false;
+
+    [SerializeField]
+    [Tooltip("Whether the game is in debug mode.")]
+    private bool fIsDebug = false;
 
     // -- model --
     private Step mStep = Step.Phone;
@@ -26,16 +37,19 @@ public class Game: MonoBehaviour {
     }
 
     protected void Start() {
-        // abort game logic if debugging w/ a different drifter
-        if (mPlayer == null) {
+        // abort game logic if in free mode
+        if (fIsFree) {
             return;
         }
 
+        // move room & player to initial position
         mBedroom.WarpToSheep();
         mPlayer.Sleep();
 
-        // toggle this line to debug different game states
-        StartCoroutine(DebugSetup());
+        // run debug setup if enabled
+        if (fIsDebug) {
+            StartCoroutine(DebugSetup());
+        }
     }
 
     private IEnumerator DebugSetup() {
@@ -43,7 +57,7 @@ public class Game: MonoBehaviour {
         PickUp(GetComponentInChildren<Phone>());
         StandUp();
         Open(GetComponentInChildren<Door>());
-        Pet(GetComponentInChildren<Sheep>());
+        Catch(GetComponentInChildren<Sheep>());
     }
 
     // -- setup --
@@ -71,11 +85,17 @@ public class Game: MonoBehaviour {
         AdvanceStep();
     }
 
-    public void Pet(Sheep sheep) {
+    public void Catch(Sheep sheep) {
         mPlayer.PickUp(sheep);
         AdvanceStep();
     }
 
+    public void EnterOuthouse() {
+        mBedroom.WarpToFood();
+        mPlayer.Sleep();
+    }
+
+    // -- commands/step
     private void AdvanceStep() {
         AdvanceToStep(mStep + 1);
     }
@@ -94,8 +114,16 @@ public class Game: MonoBehaviour {
     }
 
     // -- queries --
+    public bool IsFree() {
+        return fIsFree;
+    }
+
     public bool DidChangeToStep(Step step) {
-        return mNewStep == step;
+        if (mNewStep == null) {
+            return false;
+        }
+
+        return (mNewStep & step) != 0;
     }
 
     // -- events --
@@ -108,7 +136,7 @@ public class Game: MonoBehaviour {
             case Door door:
                 Open(door); break;
             case Sheep sheep:
-                Pet(sheep); break;
+                Catch(sheep); break;
             default:
                 Debug.LogErrorFormat("Interacting with unknown target: {0}", target); break;
         }

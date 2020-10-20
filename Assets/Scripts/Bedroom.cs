@@ -10,6 +10,10 @@ public class Bedroom: MonoBehaviour {
     [Tooltip("The entrance door to the sheep room.")]
     private GameObject fSheepDoor;
 
+    [SerializeField]
+    [Tooltip("The entrance door to the food room.")]
+    private GameObject fFoodDoor;
+
     // -- lifecycle --
     protected void Awake() {
         Game.Get().Register(bedroom: this);
@@ -29,6 +33,10 @@ public class Bedroom: MonoBehaviour {
     // -- commands --
     public void WarpToSheep() {
         WarpToDoor(fSheepDoor);
+    }
+
+    public void WarpToFood() {
+        WarpToDoor(fFoodDoor);
     }
 
     private void WarpToDoor(GameObject door) {

@@ -29,6 +29,10 @@ public class Player: MonoBehaviour {
     }
 
     protected void Start() {
+        if (Game.Get().IsFree()) {
+            return;
+        }
+
         if (IsLocked()) {
             SetLock(true);
         }

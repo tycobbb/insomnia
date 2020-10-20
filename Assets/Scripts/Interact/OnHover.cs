@@ -3,7 +3,6 @@ using UnityEngine;
 using TMPro;
 
 namespace Interact {
-    [RequireComponent(typeof(Target))]
     [RequireComponent(typeof(Collider))]
     public class OnHover: MonoBehaviour {
         // -- constants --
@@ -57,7 +56,7 @@ namespace Interact {
             // on click (when hovering)
             if (mIsHovering && Input.GetMouseButtonDown(0)) {
                 // send an event to the game
-                Game.Get().OnInteract(GetComponent<Target>());
+                Game.Get().OnInteract(GetComponentInParent<Target>());
 
                 // and disable this component
                 this.enabled = false;
