@@ -160,6 +160,11 @@ namespace Interact {
             }
         }
 
+        // -- queries --
+        public IEnumerator Animation() {
+            return mAnimation;
+        }
+
         // -- accessors --
         private Camera MainCamera() {
             return Camera.main;

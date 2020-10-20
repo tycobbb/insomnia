@@ -14,15 +14,21 @@ public class Player: MonoBehaviour {
 
     [SerializeField]
     [Tooltip("The transform to apply to the player on standing.")]
-    private Transform fStanding;
+    private Transform fSleepLoc;
+
+    [SerializeField]
+    [Tooltip("The transform to apply to the player on standing.")]
+    private Transform fStandLoc;
 
     // -- props --
     private Vector3? mLockedPos;
 
     // -- lifecycle --
-    protected void Start() {
-        Game.Get().Setup(player: this);
+    protected void Awake() {
+        Game.Get().Register(player: this);
+    }
 
+    protected void Start() {
         if (IsLocked()) {
             SetLock(true);
         }
@@ -36,24 +42,40 @@ public class Player: MonoBehaviour {
 
     // -- commands --
     public void PickUp(Phone phone) {
-        // destroy the in-world phone
-        if (phone != null) {
-            // TODO: play "pickup" sound
-            Destroy(phone.gameObject);
-        }
+        // hide the in-world phone
+        // TODO: play "pickup" sound
+        phone.gameObject.SetActive(false);
 
         // and move it to the inventory
         Inventory().PickUpPhone();
     }
 
+    public void Sleep() {
+        // show sleeping body
+        fBody.SetActive(true);
+
+        // move to bed and lock player
+        Warp(fSleepLoc.position);
+        Look(fSleepLoc.rotation);
+        SetLock(true);
+    }
+
     public void StandUp() {
-        // remove sleeping body
-        Destroy(fBody);
+        // hide sleeping body
+        fBody.SetActive(false);
 
         // unlock player and move out of bed
         SetLock(false);
-        Warp(fStanding.position);
-        Look(fStanding.rotation);
+        Warp(fStandLoc.position);
+        Look(fStandLoc.rotation);
+    }
+
+    public void PickUp(Sheep sheep) {
+        // hide the in-world sheep
+        sheep.gameObject.SetActive(false);
+
+        // and move it to the inventory
+        Inventory().PickUpSheep();
     }
 
     private void Warp(Vector3 position) {
