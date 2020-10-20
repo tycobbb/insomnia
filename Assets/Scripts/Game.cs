@@ -26,11 +26,13 @@ public class Game: MonoBehaviour {
     }
 
     protected void Start() {
-        mBedroom.WarpToSheep();
-
+        // abort game logic if debugging w/ a different drifter
         if (mPlayer != null) {
-            mPlayer.Sleep();
+            return;
         }
+
+        mBedroom.WarpToSheep();
+        mPlayer.Sleep();
 
         // toggle this line to debug different game states
         StartCoroutine(DebugSetup());
