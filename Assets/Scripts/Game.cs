@@ -24,11 +24,17 @@ public class Game: MonoBehaviour {
     [Tooltip("Whether the game is in debug mode.")]
     private bool fIsDebug = false;
 
+    [SerializeField]
+    [Tooltip("The player.")]
+    private Player fPlayer;
+
+    [SerializeField]
+    [Tooltip("The bedroom.")]
+    private Bedroom fBedroom;
+
     // -- model --
     private Step mStep = Step.Phone;
     private Step? mNewStep = Step.Phone;
-    private Player mPlayer;
-    private Bedroom mBedroom;
 
     // -- lifecycle --
     protected void Awake() {
@@ -43,8 +49,8 @@ public class Game: MonoBehaviour {
         }
 
         // move room & player to initial position
-        mBedroom.WarpToSheep();
-        mPlayer.Sleep();
+        fBedroom.WarpToSheep();
+        fPlayer.Sleep();
 
         // run debug setup if enabled
         if (fIsDebug) {
@@ -55,28 +61,19 @@ public class Game: MonoBehaviour {
     private IEnumerator DebugSetup() {
         yield return 0;
         PickUp(GetComponentInChildren<Phone>());
-        StandUp();
+        StandUp(GetComponentInChildren<Body>());
         Open(GetComponentInChildren<Door>());
         Catch(GetComponentInChildren<Sheep>());
     }
 
-    // -- setup --
-    public void Register(Player player) {
-        mPlayer = player;
-    }
-
-    public void Register(Bedroom bedroom) {
-        mBedroom = bedroom;
-    }
-
     // -- commands --
     public void PickUp(Phone phone) {
-        mPlayer.PickUp(phone);
+        fPlayer.PickUp(phone);
         AdvanceStep();
     }
 
-    public void StandUp() {
-        mPlayer.StandUp();
+    public void StandUp(Body _) {
+        fPlayer.StandUp();
         AdvanceStep();
     }
 
@@ -86,13 +83,13 @@ public class Game: MonoBehaviour {
     }
 
     public void Catch(Sheep sheep) {
-        mPlayer.PickUp(sheep);
+        fPlayer.PickUp(sheep);
         AdvanceStep();
     }
 
     public void EnterOuthouse() {
-        mBedroom.WarpToFood();
-        mPlayer.Sleep();
+        fBedroom.WarpToFood();
+        fPlayer.Sleep();
     }
 
     // -- commands/step
@@ -131,8 +128,8 @@ public class Game: MonoBehaviour {
         switch (target) {
             case Phone phone:
                 PickUp(phone); break;
-            case Foot foot:
-                StandUp(); break;
+            case Body body:
+                StandUp(body); break;
             case Door door:
                 Open(door); break;
             case Sheep sheep:

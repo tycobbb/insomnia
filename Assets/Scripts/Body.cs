@@ -1,16 +1,20 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public class Sheep: MonoBehaviour, Interact.Target {
+public class Body: MonoBehaviour, Interact.Target {
     // -- lifecycle --
     protected void Update() {
-        // enable hover on door step
-        if (Game.Get().DidChangeToStep(Game.Step.Sheep)) {
+        // enable hover on foot step
+        if (Game.Get().DidChangeToStep(Game.Step.Foot1 | Game.Step.Foot2)) {
             Hover().enabled = true;
         }
     }
 
     // -- commands --
+    public void Show() {
+        gameObject.SetActive(true);
+    }
+
     public void StartRemove() {
         StartCoroutine(Remove());
     }
@@ -22,6 +26,6 @@ public class Sheep: MonoBehaviour, Interact.Target {
 
     // -- Interact.Target --
     public Interact.OnHover Hover() {
-        return GetComponent<Interact.OnHover>();
+        return GetComponentInChildren<Interact.OnHover>();
     }
 }

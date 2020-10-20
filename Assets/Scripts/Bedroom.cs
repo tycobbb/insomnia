@@ -15,10 +15,6 @@ public class Bedroom: MonoBehaviour {
     private GameObject fFoodDoor;
 
     // -- lifecycle --
-    protected void Awake() {
-        Game.Get().Register(bedroom: this);
-    }
-
     // to mask out the house
     // protected void Start() {
     //     var renderers = GetComponentsInChildren<Renderer>();

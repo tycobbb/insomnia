@@ -26,7 +26,7 @@ namespace Interact {
         // private GameObject mPrompt;
         private bool mIsHovering = false;
         private int mWaitFrame = 0;
-        private IEnumerator mAnimation;
+        private IEnumerator mTransition;
 
         // -- lifecycle --
         protected void Start() {
@@ -49,7 +49,7 @@ namespace Interact {
             else {
                 mWaitFrame++;
                 if (mWaitFrame >= kWaitFrames) {
-                    StartCoroutine(ShowPrompt(isHovering));
+                    StartCoroutine(Transition(ShowPrompt(isHovering)));
                 }
             }
 
@@ -60,19 +60,29 @@ namespace Interact {
 
                 // and disable this component
                 this.enabled = false;
-                StartCoroutine(ShowPrompt(false));
+                StartCoroutine(Transition(ShowPrompt(false)));
             }
         }
 
         // -- commands --
+        private IEnumerator Transition(IEnumerator transition) {
+            if (mTransition != null) {
+                StopCoroutine(mTransition);
+            }
+
+            mTransition = transition;
+            yield return transition;
+            mTransition = null;
+        }
+
         private IEnumerator ShowPrompt(bool isVisible) {
             mIsHovering = isVisible;
 
             if (isVisible) {
                 fPrompt.SetActive(true);
-                yield return Animate(FadePrompt(from: 0.0f, to: 1.0f));
+                yield return FadePrompt(from: 0.0f, to: 1.0f);
             } else {
-                yield return Animate(FadePrompt(from: 1.0f, to: 0.0f));
+                yield return FadePrompt(from: 1.0f, to: 0.0f);
                 fPrompt.SetActive(false);
             }
         }
@@ -110,16 +120,6 @@ namespace Interact {
         }
 
         // -- animations --
-        private IEnumerator Animate(IEnumerator animation) {
-            if (mAnimation != null) {
-                StopCoroutine(mAnimation);
-            }
-
-            mAnimation = animation;
-            yield return animation;
-            mAnimation = null;
-        }
-
         private IEnumerator FadePrompt(float from, float to) {
             // set initial alpha
             SetPromptAlpha(from);
@@ -160,8 +160,8 @@ namespace Interact {
         }
 
         // -- queries --
-        public IEnumerator Animation() {
-            return mAnimation;
+        public IEnumerator Transition() {
+            return mTransition;
         }
 
         // -- accessors --
