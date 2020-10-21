@@ -8,7 +8,7 @@ public class Door: MonoBehaviour, Interact.Target {
     // -- lifecycle --
     protected void Update() {
         // enable hover on door step
-        if (Game.Get().DidChangeToStep(Game.Step.Door1 | Game.Step.Door2)) {
+        if (Game.Get().DidChangeToStep(Game.Step.Door1 | Game.Step.Door2 | Game.Step.Door3)) {
             Hover().Reset();
         }
     }

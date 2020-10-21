@@ -14,6 +14,10 @@ public class Bedroom: MonoBehaviour {
     [Tooltip("The entrance door to the kitchen.")]
     private GameObject fKitchenDoor;
 
+    [SerializeField]
+    [Tooltip("The entrance door to the hall.")]
+    private GameObject fHallDoor;
+
     // -- lifecycle --
     // to mask out the house
     // protected void Start() {
@@ -45,6 +49,7 @@ public class Bedroom: MonoBehaviour {
     }
 
     public void WarpToHall() {
+        WarpToDoor(fHallDoor);
     }
 
     private void WarpToDoor(GameObject door) {

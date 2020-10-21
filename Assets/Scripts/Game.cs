@@ -51,7 +51,6 @@ public class Game: MonoBehaviour {
     // -- lifecycle --
     protected void Awake() {
         _instance = this;
-
     }
 
     protected void Start() {
@@ -77,6 +76,9 @@ public class Game: MonoBehaviour {
         EnterSheepRoom();
         Catch(GetComponentInChildren<Sheep>());
         ExitSheepRoom();
+        yield return 0;
+        StandUp(GetComponentInChildren<Body>());
+        Open(GetComponentInChildren<Door>());
     }
 
     // -- commands --
@@ -175,6 +177,8 @@ public class Game: MonoBehaviour {
                 Catch(sheep); break;
             case Food food:
                 Eat(food); break;
+            case ExitKitchen _:
+                ExitKitchen(); break;
             default:
                 Debug.LogErrorFormat("Interacting with unknown target: {0}", target); break;
         }
