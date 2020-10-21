@@ -20,12 +20,6 @@ public class Game: MonoBehaviour {
         Door3 = 1 << 10,
     }
 
-    public enum Room: ushort {
-        Sheep,
-        Kitchen,
-        Hall
-    }
-
     // -- fields --
     [SerializeField]
     [Tooltip("Whether the game is in debug mode.")]
@@ -44,9 +38,8 @@ public class Game: MonoBehaviour {
     private Bedroom fBedroom;
 
     // -- model --
-    private Step mStep = Step.Phone;
-    private Step? mNewStep = Step.Phone;
-    private Room mNextRoom = Room.Sheep;
+    private Step mStep;
+    private Step? mNewStep;
 
     // -- lifecycle --
     protected void Awake() {
@@ -59,7 +52,9 @@ public class Game: MonoBehaviour {
             return;
         }
 
-        // move bedroom and player to initial position
+        // initialize state
+        AdvanceToStep(Step.Phone);
+        // initialize bedroom/player position
         EnterBedroom((b) => b.WarpToSheep());
 
         // run debug setup if enabled
@@ -105,7 +100,6 @@ public class Game: MonoBehaviour {
 
     public void EnterSheepRoom() {
         fBedroom.Hide();
-        mNextRoom = Room.Kitchen;
     }
 
     public void ExitSheepRoom() {
@@ -120,7 +114,6 @@ public class Game: MonoBehaviour {
 
     public void EnterKitchen() {
         fBedroom.Hide();
-        mNextRoom = Room.Hall;
     }
 
     public void Eat(Food food) {
