@@ -62,7 +62,6 @@ namespace Interact {
                 mWaitFrame++;
 
                 if (mWaitFrame >= kWaitFrames) {
-                    Log.Debug("OnHover - Select: {0}", hovered);
                     Select(mHovered);
                 }
             }
@@ -150,6 +149,13 @@ namespace Interact {
                 camera.transform.forward,
                 fMinDistance
             );
+
+            // Debug.DrawRay(
+            //     camera.transform.position,
+            //     camera.transform.forward * 10.0f,
+            //     Color.green,
+            //     0.5f
+            // );
 
             if (fMode == Mode.Fixed) {
                 foreach (var hit in hits) {

@@ -9,22 +9,28 @@ public static class Log {
     }
 
     // -- props --
-    private static Level sLevel = Level.Info;
+    private static Level sLevel;
 
     // -- commands --
     public static void SetLevel(Level level) {
-        sLevel = level;
+        #if UNITY_EDITOR
+            sLevel = level;
+        #endif
     }
 
     public static void Info(string format, params object[] args) {
-        if (sLevel >= Level.Info) {
-            U.Debug.LogFormat(format, args);
-        }
+        #if UNITY_EDITOR
+            if (sLevel >= Level.Info) {
+                U.Debug.LogFormat(format, args);
+            }
+        #endif
     }
 
     public static void Debug(string format, params object[] args) {
-        if (sLevel >= Level.Debug) {
-            U.Debug.LogFormat(format, args);
-        }
+        #if UNITY_EDITOR
+            if (sLevel >= Level.Debug) {
+                U.Debug.LogFormat(format, args);
+            }
+        #endif
     }
 }

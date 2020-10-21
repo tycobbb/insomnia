@@ -30,6 +30,10 @@ public class Game: MonoBehaviour {
     private bool fIsDebug = false;
 
     [SerializeField]
+    [Tooltip("The log level.")]
+    private Log.Level fLogLevel = Log.Level.Info;
+
+    [SerializeField]
     [Tooltip("The player.")]
     private Player fPlayer;
 
@@ -46,9 +50,7 @@ public class Game: MonoBehaviour {
         _instance = this;
 
         // configure services
-        if (fIsDebug) {
-            Log.SetLevel(Log.Level.Debug);
-        }
+        Log.SetLevel(fLogLevel);
     }
 
     protected void Start() {
