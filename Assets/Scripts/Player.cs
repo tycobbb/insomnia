@@ -50,6 +50,12 @@ public class Player: MonoBehaviour {
         Inventory().PickUpPhone();
     }
 
+    public void PickUp(Food food) {
+        // move in-world food into inventory
+        // TODO: play "pickup" sound
+        Inventory().PickUpFood(food.Selected());
+    }
+
     public void Sleep() {
         fBody.Show();
 
@@ -76,6 +82,16 @@ public class Player: MonoBehaviour {
         Inventory().PickUpSheep();
     }
 
+    public void SetLock(bool isLocked) {
+        fIsLocked = isLocked;
+        mLockedPos = isLocked ? transform.position : (Vector3?)null;
+
+        var bob = GetComponentInChildren<HeadBob>();
+        if (bob != null) {
+            bob.enabled = !isLocked;
+        }
+    }
+
     private void Warp(Vector3 position) {
         var c = GetComponent<CharacterController>();
         c.enabled = false;
@@ -86,16 +102,6 @@ public class Player: MonoBehaviour {
     private void Look(Quaternion rotation) {
         var v = GetComponent<MouseLook>();
         v.Rotate(rotation);
-    }
-
-    private void SetLock(bool isLocked) {
-        fIsLocked = isLocked;
-        mLockedPos = isLocked ? transform.position : (Vector3?)null;
-
-        var bob = GetComponentInChildren<HeadBob>();
-        if (bob != null) {
-            bob.enabled = !isLocked;
-        }
     }
 
     // -- queries --

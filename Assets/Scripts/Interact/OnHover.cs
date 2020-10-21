@@ -3,16 +3,25 @@ using UnityEngine;
 using TMPro;
 
 namespace Interact {
-    [RequireComponent(typeof(Collider))]
     public class OnHover: MonoBehaviour {
         // -- constants --
         private const float kFadeDuration = 0.2f;
         private const int kWaitFrames = 7;
 
+        // -- types --
+        enum Mode {
+            Fixed,
+            Dynamic,
+        }
+
         // -- fields --
         [SerializeField]
         [Tooltip("The prompt to show on hover")]
         private GameObject fPrompt = null;
+
+        [SerializeField]
+        [Tooltip("The hover mode. Fixed or child-attaching.")]
+        private Mode fMode = Mode.Fixed;
 
         [SerializeField]
         [Tooltip("The radius from the center considered visible")]
@@ -23,60 +32,75 @@ namespace Interact {
         private float fMinDistance = 20.0f;
 
         // -- props --
-        // private GameObject mPrompt;
-        private bool mIsHovering = false;
+        private GameObject mHovered = null;
+        private GameObject mSelected = null;
         private int mWaitFrame = 0;
         private IEnumerator mTransition;
 
         // -- lifecycle --
         protected void Start() {
-            fPrompt.SetActive(mIsHovering);
+            switch (fMode) {
+                case Mode.Fixed when GetComponent<Collider>() == null:
+                    Debug.LogWarningFormat("OnHover requires at a collider on this object."); break;
+                case Mode.Dynamic when GetComponentInChildren<Collider>() == null:
+                    Debug.LogWarningFormat("OnHover requires at least one child collider."); break;
+            }
+
+            fPrompt.SetActive(false);
         }
 
         protected void Update() {
-            var isHovering = IsHovering();
+            var hovered = GetHoveredObject();
 
-            // if visible, make sure the prompt faces the camera
-            if (isHovering) {
-                fPrompt.transform.forward = MainCamera().transform.forward;
-            }
-
-            // if visibility is the same, tare wait frames
-            if (isHovering == mIsHovering) {
+            // if the hovered object changes, tare the wait frames
+            if (hovered != mHovered) {
+                mHovered = hovered;
                 mWaitFrame = 0;
             }
-            // otherwise, wait a few frames before changing visibility
-            else {
+            // otherwise, wait a few frames before changing targets
+            else if (hovered != mSelected) {
                 mWaitFrame++;
+
                 if (mWaitFrame >= kWaitFrames) {
-                    StartCoroutine(Transition(ShowPrompt(isHovering)));
+                    SetSelected(mHovered);
                 }
             }
 
-            // on click (when hovering)
-            if (mIsHovering && Input.GetMouseButtonDown(0)) {
+            // re-orient the prompt towards the camera if something is selected
+            if (mSelected != null) {
+                fPrompt.transform.forward = MainCamera().transform.forward;
+            }
+
+            // if something is selected, send an interaction event on click
+            if (mSelected != null && Input.GetMouseButtonDown(0)) {
                 // send an event to the game
                 Game.Get().OnInteract(GetComponentInParent<Target>());
 
                 // and disable this component
+                SetSelected(null);
                 this.enabled = false;
-                StartCoroutine(Transition(ShowPrompt(false)));
             }
         }
 
         // -- commands --
-        private IEnumerator Transition(IEnumerator transition) {
-            if (mTransition != null) {
-                StopCoroutine(mTransition);
-            }
-
-            mTransition = transition;
-            yield return transition;
-            mTransition = null;
+        public void Reset() {
+            this.enabled = true;
+            fPrompt.SetActive(false);
         }
 
+        private void SetSelected(GameObject selected) {
+            mHovered = selected;
+            mSelected = selected;
+            StartCoroutine(Transition(ShowPrompt(selected != null)));
+        }
+
+        // -- commands/transitions
         private IEnumerator ShowPrompt(bool isVisible) {
-            mIsHovering = isVisible;
+            if (isVisible && fMode == Mode.Dynamic) {
+                var pos = mSelected.transform.position;
+                pos += new Vector3(-0.5f, 0.5f);
+                fPrompt.transform.position = pos;
+            }
 
             if (isVisible) {
                 fPrompt.SetActive(true);
@@ -87,19 +111,29 @@ namespace Interact {
             }
         }
 
+        private IEnumerator Transition(IEnumerator transition) {
+            if (mTransition != null) {
+                StopCoroutine(mTransition);
+            }
+
+            mTransition = transition;
+            yield return transition;
+            mTransition = null;
+        }
+
         // -- queries --
-        private bool IsHovering() {
+        private GameObject GetHoveredObject() {
             var camera = MainCamera();
             var screen = camera.WorldToScreenPoint(transform.position);
 
             // check if we're behind the camera
             if (screen.z < 0) {
-                return false;
+                return null;
             }
 
             // check if we're in frame
             if (!Screen.safeArea.Contains(screen)) {
-                return false;
+                return null;
             }
 
             // check if a spherecast hits this object
@@ -110,13 +144,21 @@ namespace Interact {
                 fMinDistance
             );
 
-            foreach (var hit in hits) {
-                if (hit.transform == transform) {
-                    return true;
+            if (fMode == Mode.Fixed) {
+                foreach (var hit in hits) {
+                    if (hit.transform == transform) {
+                        return hit.collider.gameObject;
+                    }
+                }
+            } else {
+                foreach (var hit in hits) {
+                    if (hit.transform.IsChildOf(transform)) {
+                        return hit.collider.gameObject;
+                    }
                 }
             }
 
-            return false;
+            return null;
         }
 
         // -- animations --
@@ -160,6 +202,10 @@ namespace Interact {
         }
 
         // -- queries --
+        public GameObject Selected() {
+            return mSelected;
+        }
+
         public IEnumerator Transition() {
             return mTransition;
         }

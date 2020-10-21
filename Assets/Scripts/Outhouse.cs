@@ -10,6 +10,6 @@ public class Outhouse: MonoBehaviour {
     protected void OnTriggerEnter(Collider closeSwitch) {
         fDoor.enabled = true;
         closeSwitch.enabled = false;
-        Game.Get().EnterBedroom();
+        Game.Get().ExitSheepRoom();
     }
 }

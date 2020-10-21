@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -10,9 +11,13 @@ public class Game: MonoBehaviour {
         Foot1 = 1 << 1,
         Door1 = 1 << 2,
         Sheep = 1 << 3,
-        Outhouse = 1 << 4,
+        Exit1 = 1 << 4,
         Foot2 = 1 << 5,
         Door2 = 1 << 6,
+        Food = 1 << 7,
+        Exit2 = 1 << 8,
+        Foot3 = 1 << 9,
+        Door3 = 1 << 10,
     }
 
     public enum Room: ushort {
@@ -56,7 +61,7 @@ public class Game: MonoBehaviour {
         }
 
         // move bedroom and player to initial position
-        EnterBedroom();
+        EnterBedroom((b) => b.WarpToSheep());
 
         // run debug setup if enabled
         if (fIsDebug) {
@@ -69,24 +74,15 @@ public class Game: MonoBehaviour {
         PickUp(GetComponentInChildren<Phone>());
         StandUp(GetComponentInChildren<Body>());
         Open(GetComponentInChildren<Door>());
+        EnterSheepRoom();
         Catch(GetComponentInChildren<Sheep>());
+        ExitSheepRoom();
     }
 
     // -- commands --
-    public void EnterBedroom() {
+    public void EnterBedroom(Action<Bedroom> warp) {
         fBedroom.Show();
-
-        // warp bedroom to correct room given game state
-        switch (mNextRoom) {
-            case Room.Sheep:
-                fBedroom.WarpToSheep(); break;
-            case Room.Kitchen:
-                fBedroom.WarpToFood(); break;
-            case Room.Hall:
-                fBedroom.WarpToHall(); break;
-        }
-
-        // reset player to the sleeping pos
+        warp(fBedroom);
         fPlayer.Sleep();
     }
 
@@ -106,9 +102,13 @@ public class Game: MonoBehaviour {
     }
 
     public void EnterSheepRoom() {
-        fBedroom.CloseDoor();
         fBedroom.Hide();
         mNextRoom = Room.Kitchen;
+    }
+
+    public void ExitSheepRoom() {
+        EnterBedroom((b) => b.WarpToFood());
+        AdvanceStep();
     }
 
     public void Catch(Sheep sheep) {
@@ -117,14 +117,23 @@ public class Game: MonoBehaviour {
     }
 
     public void EnterKitchen() {
-        fBedroom.CloseDoor();
         fBedroom.Hide();
         mNextRoom = Room.Hall;
     }
 
+    public void Eat(Food food) {
+        fPlayer.PickUp(food);
+        AdvanceStep();
+    }
+
+    public void ExitKitchen() {
+        EnterBedroom((b) => b.WarpToHall());
+        AdvanceStep();
+    }
+
     // -- commands/step
     private void AdvanceStep() {
-        AdvanceToStep(mStep + 1);
+        AdvanceToStep((Step)((ushort)mStep << 1));
     }
 
     private void AdvanceToStep(Step step) {
@@ -164,6 +173,8 @@ public class Game: MonoBehaviour {
                 Open(door); break;
             case Sheep sheep:
                 Catch(sheep); break;
+            case Food food:
+                Eat(food); break;
             default:
                 Debug.LogErrorFormat("Interacting with unknown target: {0}", target); break;
         }

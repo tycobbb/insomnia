@@ -27,11 +27,8 @@ public class Bedroom: MonoBehaviour {
     // }
 
     // -- commands --
-    public void CloseDoor() {
-        fDoor.Close();
-    }
-
     public void Hide() {
+        fDoor.Close();
         gameObject.SetActive(false);
     }
 

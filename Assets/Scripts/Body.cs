@@ -6,7 +6,7 @@ public class Body: MonoBehaviour, Interact.Target {
     protected void Update() {
         // enable hover on foot step
         if (Game.Get().DidChangeToStep(Game.Step.Foot1 | Game.Step.Foot2)) {
-            Hover().enabled = true;
+            Hover().Reset();
         }
     }
 
