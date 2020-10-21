@@ -44,6 +44,11 @@ public class Game: MonoBehaviour {
     // -- lifecycle --
     protected void Awake() {
         _instance = this;
+
+        // configure services
+        if (fIsDebug) {
+            Log.SetLevel(Log.Level.Debug);
+        }
     }
 
     protected void Start() {
@@ -71,6 +76,7 @@ public class Game: MonoBehaviour {
         EnterSheepRoom();
         Catch(GetComponentInChildren<Sheep>());
         ExitSheepRoom();
+
         yield return 0;
         StandUp(GetComponentInChildren<Body>());
         Open(GetComponentInChildren<Door>());
@@ -132,6 +138,8 @@ public class Game: MonoBehaviour {
     }
 
     private void AdvanceToStep(Step step) {
+        Log.Debug("Game - AdvanceToStep: {0}", step);
+
         mStep = step;
         mNewStep = step;
         StartCoroutine(ClearNewStep(step));

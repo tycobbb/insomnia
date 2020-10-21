@@ -54,7 +54,7 @@ namespace Interact {
 
             // if the hovered object changes, tare the wait frames
             if (hovered != mHovered) {
-                mHovered = hovered;
+                Hover(hovered);
                 mWaitFrame = 0;
             }
             // otherwise, wait a few frames before changing targets
@@ -62,7 +62,8 @@ namespace Interact {
                 mWaitFrame++;
 
                 if (mWaitFrame >= kWaitFrames) {
-                    SetSelected(mHovered);
+                    Log.Debug("OnHover - Select: {0}", hovered);
+                    Select(mHovered);
                 }
             }
 
@@ -77,7 +78,7 @@ namespace Interact {
                 Game.Get().OnInteract(GetComponentInParent<Target>());
 
                 // and disable this component
-                SetSelected(null);
+                Select(null);
                 this.enabled = false;
             }
         }
@@ -88,7 +89,13 @@ namespace Interact {
             fPrompt.SetActive(false);
         }
 
-        private void SetSelected(GameObject selected) {
+        private void Hover(GameObject hovered) {
+            Log.Debug("OnHover - Hover: {0}", hovered);
+            mHovered = hovered;
+        }
+
+        private void Select(GameObject selected) {
+            Log.Debug("OnHover - Select: {0}", selected);
             mHovered = selected;
             mSelected = selected;
             StartCoroutine(Transition(ShowPrompt(selected != null)));

@@ -6,7 +6,6 @@ public class Phone: MonoBehaviour, Interact.Target {
     protected void Update() {
         // enable hover on phone step
         if (Game.Get().DidChangeToStep(Game.Step.Phone)) {
-            Debug.LogFormat("Enable phone");
             Hover().Reset();
         }
     }
