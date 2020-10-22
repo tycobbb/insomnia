@@ -7,8 +7,9 @@ public class Outhouse: MonoBehaviour {
     private Collider fDoor;
 
     // -- lifecycle --
-    protected void OnTriggerEnter(Collider floorSwitch) {
+    protected void OnTriggerEnter(Collider closeSwitch) {
         fDoor.enabled = true;
-        floorSwitch.enabled = false;
+        closeSwitch.enabled = false;
+        Game.Get().ExitSheepRoom();
     }
 }

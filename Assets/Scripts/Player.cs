@@ -9,8 +9,8 @@ public class Player: MonoBehaviour {
     private bool fIsLocked = false;
 
     [SerializeField]
-    [Tooltip("The player's body when lying down.")]
-    private GameObject fBody;
+    [Tooltip("The player's resting body.")]
+    private Body fBody;
 
     [SerializeField]
     [Tooltip("The transform to apply to the player on standing.")]
@@ -24,11 +24,11 @@ public class Player: MonoBehaviour {
     private Vector3? mLockedPos;
 
     // -- lifecycle --
-    protected void Awake() {
-        Game.Get().Register(player: this);
-    }
-
     protected void Start() {
+        if (Game.Get().IsFree()) {
+            return;
+        }
+
         if (IsLocked()) {
             SetLock(true);
         }
@@ -44,15 +44,20 @@ public class Player: MonoBehaviour {
     public void PickUp(Phone phone) {
         // hide the in-world phone
         // TODO: play "pickup" sound
-        phone.gameObject.SetActive(false);
+        phone.StartRemove();
 
         // and move it to the inventory
         Inventory().PickUpPhone();
     }
 
+    public void PickUp(Food food) {
+        // move in-world food into inventory
+        // TODO: play "pickup" sound
+        Inventory().PickUpFood(food.Selected());
+    }
+
     public void Sleep() {
-        // show sleeping body
-        fBody.SetActive(true);
+        fBody.Show();
 
         // move to bed and lock player
         Warp(fSleepLoc.position);
@@ -61,8 +66,7 @@ public class Player: MonoBehaviour {
     }
 
     public void StandUp() {
-        // hide sleeping body
-        fBody.SetActive(false);
+        fBody.StartRemove();
 
         // unlock player and move out of bed
         SetLock(false);
@@ -72,10 +76,20 @@ public class Player: MonoBehaviour {
 
     public void PickUp(Sheep sheep) {
         // hide the in-world sheep
-        sheep.gameObject.SetActive(false);
+        sheep.StartRemove();
 
         // and move it to the inventory
         Inventory().PickUpSheep();
+    }
+
+    public void SetLock(bool isLocked) {
+        fIsLocked = isLocked;
+        mLockedPos = isLocked ? transform.position : (Vector3?)null;
+
+        var bob = GetComponentInChildren<HeadBob>();
+        if (bob != null) {
+            bob.enabled = !isLocked;
+        }
     }
 
     private void Warp(Vector3 position) {
@@ -88,16 +102,6 @@ public class Player: MonoBehaviour {
     private void Look(Quaternion rotation) {
         var v = GetComponent<MouseLook>();
         v.Rotate(rotation);
-    }
-
-    private void SetLock(bool isLocked) {
-        fIsLocked = isLocked;
-        mLockedPos = isLocked ? transform.position : (Vector3?)null;
-
-        var bob = GetComponentInChildren<HeadBob>();
-        if (bob != null) {
-            bob.enabled = !isLocked;
-        }
     }
 
     // -- queries --

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -6,63 +7,97 @@ public class Game: MonoBehaviour {
 
     // -- types --
     public enum Step: ushort {
-        Phone,
-        Foot,
-        Door,
-        Sheep,
-        Sleep,
+        Phone = 1 << 0,
+        Foot1 = 1 << 1,
+        Door1 = 1 << 2,
+        Sheep = 1 << 3,
+        Exit1 = 1 << 4,
+        Foot2 = 1 << 5,
+        Door2 = 1 << 6,
+        Food = 1 << 7,
+        Exit2 = 1 << 8,
+        Foot3 = 1 << 9,
+        Door3 = 1 << 10,
     }
 
+    // -- fields --
+    [SerializeField]
+    [Tooltip("Whether the game is in debug mode.")]
+    private bool fIsFree = false;
+
+    [SerializeField]
+    [Tooltip("Whether the game is in debug mode.")]
+    private bool fIsDebug = false;
+
+    [SerializeField]
+    [Tooltip("The log level.")]
+    private Log.Level fLogLevel = Log.Level.Info;
+
+    [SerializeField]
+    [Tooltip("The player.")]
+    private Player fPlayer;
+
+    [SerializeField]
+    [Tooltip("The bedroom.")]
+    private Bedroom fBedroom;
+
     // -- model --
-    private Step mStep = Step.Phone;
-    private Step? mNewStep = Step.Phone;
-    private Player mPlayer;
-    private Bedroom mBedroom;
+    private Step mStep;
+    private Step? mNewStep;
 
     // -- lifecycle --
     protected void Awake() {
         _instance = this;
 
+        // configure services
+        Log.SetLevel(fLogLevel);
     }
 
     protected void Start() {
-        // abort game logic if debugging w/ a different drifter
-        if (mPlayer == null) {
+        // abort game logic if in free mode
+        if (fIsFree) {
             return;
         }
 
-        mBedroom.WarpToSheep();
-        mPlayer.Sleep();
+        // initialize state
+        AdvanceToStep(Step.Phone);
+        // initialize bedroom/player position
+        EnterBedroom((b) => b.WarpToSheep());
 
-        // toggle this line to debug different game states
-        StartCoroutine(DebugSetup());
+        // run debug setup if enabled
+        if (fIsDebug) {
+            StartCoroutine(DebugSetup());
+        }
     }
 
     private IEnumerator DebugSetup() {
         yield return 0;
         PickUp(GetComponentInChildren<Phone>());
-        StandUp();
+        StandUp(GetComponentInChildren<Body>());
         Open(GetComponentInChildren<Door>());
-        Pet(GetComponentInChildren<Sheep>());
-    }
+        EnterSheepRoom();
+        Catch(GetComponentInChildren<Sheep>());
+        ExitSheepRoom();
 
-    // -- setup --
-    public void Register(Player player) {
-        mPlayer = player;
-    }
-
-    public void Register(Bedroom bedroom) {
-        mBedroom = bedroom;
+        yield return 0;
+        StandUp(GetComponentInChildren<Body>());
+        Open(GetComponentInChildren<Door>());
     }
 
     // -- commands --
+    public void EnterBedroom(Action<Bedroom> warp) {
+        fBedroom.Show();
+        warp(fBedroom);
+        fPlayer.Sleep();
+    }
+
     public void PickUp(Phone phone) {
-        mPlayer.PickUp(phone);
+        fPlayer.PickUp(phone);
         AdvanceStep();
     }
 
-    public void StandUp() {
-        mPlayer.StandUp();
+    public void StandUp(Body _) {
+        fPlayer.StandUp();
         AdvanceStep();
     }
 
@@ -71,16 +106,42 @@ public class Game: MonoBehaviour {
         AdvanceStep();
     }
 
-    public void Pet(Sheep sheep) {
-        mPlayer.PickUp(sheep);
+    public void EnterSheepRoom() {
+        fBedroom.Hide();
+    }
+
+    public void ExitSheepRoom() {
+        EnterBedroom((b) => b.WarpToFood());
         AdvanceStep();
     }
 
+    public void Catch(Sheep sheep) {
+        fPlayer.PickUp(sheep);
+        AdvanceStep();
+    }
+
+    public void EnterKitchen() {
+        fBedroom.Hide();
+    }
+
+    public void Eat(Food food) {
+        fPlayer.PickUp(food);
+        AdvanceStep();
+    }
+
+    public void ExitKitchen() {
+        EnterBedroom((b) => b.WarpToHall());
+        AdvanceStep();
+    }
+
+    // -- commands/step
     private void AdvanceStep() {
-        AdvanceToStep(mStep + 1);
+        AdvanceToStep((Step)((ushort)mStep << 1));
     }
 
     private void AdvanceToStep(Step step) {
+        Log.Debug("Game - AdvanceToStep: {0}", step);
+
         mStep = step;
         mNewStep = step;
         StartCoroutine(ClearNewStep(step));
@@ -94,8 +155,16 @@ public class Game: MonoBehaviour {
     }
 
     // -- queries --
+    public bool IsFree() {
+        return fIsFree;
+    }
+
     public bool DidChangeToStep(Step step) {
-        return mNewStep == step;
+        if (mNewStep == null) {
+            return false;
+        }
+
+        return (mNewStep & step) != 0;
     }
 
     // -- events --
@@ -103,12 +172,16 @@ public class Game: MonoBehaviour {
         switch (target) {
             case Phone phone:
                 PickUp(phone); break;
-            case Foot foot:
-                StandUp(); break;
+            case Body body:
+                StandUp(body); break;
             case Door door:
                 Open(door); break;
             case Sheep sheep:
-                Pet(sheep); break;
+                Catch(sheep); break;
+            case Food food:
+                Eat(food); break;
+            case ExitKitchen _:
+                ExitKitchen(); break;
             default:
                 Debug.LogErrorFormat("Interacting with unknown target: {0}", target); break;
         }
