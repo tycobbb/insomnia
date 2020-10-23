@@ -24,9 +24,6 @@ public class Player: MonoBehaviour {
     [Tooltip("The transform to apply to the player on standing.")]
     private Transform fStandLoc;
 
-    // -- props --
-    private Vector3? mLockedPos;
-
     // -- lifecycle --
     protected void Start() {
         if (Game.Get().IsFree()) {
@@ -35,12 +32,6 @@ public class Player: MonoBehaviour {
 
         if (IsLocked()) {
             SetLock(true);
-        }
-    }
-
-    protected void LateUpdate() {
-        if (IsLocked() && mLockedPos != null) {
-            transform.position = mLockedPos.Value;
         }
     }
 
@@ -92,7 +83,9 @@ public class Player: MonoBehaviour {
 
     public void SetLock(bool isLocked) {
         fIsLocked = isLocked;
-        mLockedPos = isLocked ? transform.position : (Vector3?)null;
+
+        var c = GetComponent<CharacterController>();
+        c.enabled = !isLocked;
 
         var bob = GetComponentInChildren<HeadBob>();
         if (bob != null) {
