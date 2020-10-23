@@ -13,6 +13,10 @@ public class Player: MonoBehaviour {
     private Body fBody;
 
     [SerializeField]
+    [Tooltip("The player's inventory.")]
+    private Inventory fInventory;
+
+    [SerializeField]
     [Tooltip("The transform to apply to the player on standing.")]
     private Transform fSleepLoc;
 
@@ -47,13 +51,25 @@ public class Player: MonoBehaviour {
         phone.StartRemove();
 
         // and move it to the inventory
-        Inventory().PickUpPhone();
+        fInventory.PickUpPhone();
+    }
+
+    public void PickUp(Sheep sheep) {
+        // hide the in-world sheep
+        sheep.StartRemove();
+
+        // and move it to the inventory
+        fInventory.PickUpSheep();
     }
 
     public void PickUp(Food food) {
         // move in-world food into inventory
         // TODO: play "pickup" sound
-        Inventory().PickUpFood(food.Selected());
+        fInventory.PickUpFood(food.Selected());
+    }
+
+    public void SetPhoneTime(string time) {
+        fInventory.SetPhoneTime(time);
     }
 
     public void Sleep() {
@@ -72,14 +88,6 @@ public class Player: MonoBehaviour {
         SetLock(false);
         Warp(fStandLoc.position);
         Look(fStandLoc.rotation);
-    }
-
-    public void PickUp(Sheep sheep) {
-        // hide the in-world sheep
-        sheep.StartRemove();
-
-        // and move it to the inventory
-        Inventory().PickUpSheep();
     }
 
     public void SetLock(bool isLocked) {
@@ -107,10 +115,5 @@ public class Player: MonoBehaviour {
     // -- queries --
     private bool IsLocked() {
         return fIsLocked;
-    }
-
-    // -- dependencies --
-    private Inventory Inventory() {
-        return GetComponent<Inventory>();
     }
 }
