@@ -4,16 +4,16 @@ public class Kitchen: MonoBehaviour {
     // -- fields --
     [SerializeField]
     [Tooltip("The wall between the kitchen and bedroom.")]
-    private GameObject kDoorWall;
+    private GameObject fDoorWall;
 
     // -- commands --
     private void Enter() {
-        kDoorWall.SetActive(true);
+        fDoorWall.SetActive(true);
         Game.Get().EnterKitchen();
     }
 
     // -- events --
-    protected void OnTriggerEnter(Collider collider) {
+    protected void OnTriggerEnter(Collider _) {
         Enter();
     }
 }

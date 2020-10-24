@@ -6,6 +6,7 @@ public class Game: MonoBehaviour {
     private static Game _instance;
 
     // -- types --
+    [Flags]
     public enum Step: ushort {
         Phone = 1 << 0,
         Foot1 = 1 << 1,

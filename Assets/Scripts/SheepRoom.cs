@@ -7,7 +7,7 @@ public class SheepRoom: MonoBehaviour {
     }
 
     // -- events --
-    protected void OnTriggerEnter(Collider collider) {
+    protected void OnTriggerEnter(Collider _) {
         Enter();
     }
 }
