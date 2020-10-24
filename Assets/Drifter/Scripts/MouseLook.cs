@@ -6,9 +6,11 @@
 // There should be one MouseLook script on the Player itself, and another on the camera
 // player's MouseLook should use MouseX, camera's MouseLook should use MouseY
 
+using System;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.IMGUI.Controls;
 
 public class MouseLook : MonoBehaviour
 {
@@ -123,13 +125,24 @@ public class MouseLook : MonoBehaviour
             transform.localRotation = originalRotation * yQuaternion;
         }
     }
+    
+    public void Reset() {
+        if (axes == RotationAxes.MouseX) {
+            offsetX = rotationX;
+            rotArrayX.Clear();
+        } else {
+            offsetY = rotationY;
+            rotArrayY.Clear();
+        }
+        
+        originalRotation = transform.localRotation;
+    }
 
-    public void Rotate(Quaternion rotation) {
-        originalRotation = rotation;
-        offsetX = rotationX;
-        offsetY = rotationY;
-        rotArrayX.Clear();
-        rotArrayY.Clear();
+    public Action<float> AnimationTo(Quaternion to) {
+        var from = transform.rotation;
+        return (percent) => {
+            transform.rotation = Quaternion.Lerp(from, to, percent);
+        };
     }
 
     public void SetSensitivity(float s)

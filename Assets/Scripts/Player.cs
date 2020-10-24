@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using JetBrains.Annotations;
+using System;
+using System.Collections;
+using System.Linq;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 [RequireComponent(typeof(Inventory))]
 public class Player: MonoBehaviour {
@@ -75,7 +77,7 @@ public class Player: MonoBehaviour {
     public void Sleep() {
         // move to bed and lock player
         Warp(fSleepLoc.position);
-        Look(fSleepLoc.rotation);
+        // Look(fSleepLoc.rotation);
         SetLock(true);
         
         // snap fixed body to attached body's position
@@ -87,29 +89,47 @@ public class Player: MonoBehaviour {
         StartCoroutine(StandUpAsync());
     }
 
-    private IEnumerator StandUpAsync() {
+    public IEnumerator StandUpAsync() {
+        // disable mouse look
+        var looks = GetComponentsInChildren<MouseLook>();
+        foreach (var look in looks) {
+            look.enabled = false;
+        }
+
+        // recenter camera over a few frames
+        var frames = 5;
+        var rotations = looks
+            .Select((look) => look.AnimationTo(Quaternion.identity));
+        
+        for (var i = 0; i < frames; i++) {
+            var percent = (float) i / frames;
+            yield return 0;
+            foreach (var rotate in rotations) {
+                rotate(percent);
+            }
+        }
+        
         // prepare scene for animation
         fFixedBody.StartRemove();
         
-        // disable mouse look
-        var controls = GetComponentsInChildren<MouseLook>();
-        foreach (var control in controls) {
-            control.enabled = false;
-        }
-        
         // play the animation
+        fBody.SetActive(true);
         Animator().Play(kStandUpAnim);
-        yield return new WaitForSeconds(kStandUpAnimDuration);
+    }
+    
+    [UsedImplicitly] // AnimationEvent
+    private void DidStandUp() {
         fBody.SetActive(false);
         
-        // unlock player and move out of bed
-        SetLock(false); 
-        Warp(fStandLoc.position);
-        Look(fStandLoc.rotation);
-
+        // unlock player and assign final position
+        SetLock(false);
+        Warp(transform.position);
+        
         // re-enable mouse look
-        foreach (var control in controls) {
-            control.enabled = true;
+        var looks = GetComponentsInChildren<MouseLook>();
+        foreach (var look in looks) {
+            look.Reset();
+            look.enabled = true;
         }
     }
 
@@ -119,7 +139,7 @@ public class Player: MonoBehaviour {
         var c = GetComponent<CharacterController>();
         c.enabled = !isLocked;
 
-        var h = GetComponent<HeadBob>();
+        var h = GetComponentInChildren<HeadBob>();
         h.enabled = !isLocked;
     }
 
@@ -130,11 +150,6 @@ public class Player: MonoBehaviour {
         c.enabled = false;
         c.transform.position = position;
         c.enabled = !fIsLocked;
-    }
-
-    private void Look(Quaternion rotation) {
-        var v = GetComponent<MouseLook>();
-        v.Rotate(rotation);
     }
 
     // -- queries --
