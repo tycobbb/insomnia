@@ -13,15 +13,16 @@ public class Player: MonoBehaviour {
     private Body fBody;
 
     [SerializeField]
+    [Tooltip("The player's inventory.")]
+    private Inventory fInventory;
+
+    [SerializeField]
     [Tooltip("The transform to apply to the player on standing.")]
     private Transform fSleepLoc;
 
     [SerializeField]
     [Tooltip("The transform to apply to the player on standing.")]
     private Transform fStandLoc;
-
-    // -- props --
-    private Vector3? mLockedPos;
 
     // -- lifecycle --
     protected void Start() {
@@ -34,12 +35,6 @@ public class Player: MonoBehaviour {
         }
     }
 
-    protected void LateUpdate() {
-        if (IsLocked() && mLockedPos != null) {
-            transform.position = mLockedPos.Value;
-        }
-    }
-
     // -- commands --
     public void PickUp(Phone phone) {
         // hide the in-world phone
@@ -47,13 +42,25 @@ public class Player: MonoBehaviour {
         phone.StartRemove();
 
         // and move it to the inventory
-        Inventory().PickUpPhone();
+        fInventory.PickUpPhone();
+    }
+
+    public void PickUp(Sheep sheep) {
+        // hide the in-world sheep
+        sheep.StartRemove();
+
+        // and move it to the inventory
+        fInventory.PickUpSheep();
     }
 
     public void PickUp(Food food) {
         // move in-world food into inventory
         // TODO: play "pickup" sound
-        Inventory().PickUpFood(food.Selected());
+        fInventory.PickUpFood(food.Selected());
+    }
+
+    public void SetPhoneTime(string time) {
+        fInventory.SetPhoneTime(time);
     }
 
     public void Sleep() {
@@ -74,17 +81,11 @@ public class Player: MonoBehaviour {
         Look(fStandLoc.rotation);
     }
 
-    public void PickUp(Sheep sheep) {
-        // hide the in-world sheep
-        sheep.StartRemove();
-
-        // and move it to the inventory
-        Inventory().PickUpSheep();
-    }
-
     public void SetLock(bool isLocked) {
         fIsLocked = isLocked;
-        mLockedPos = isLocked ? transform.position : (Vector3?)null;
+
+        var c = GetComponent<CharacterController>();
+        c.enabled = !isLocked;
 
         var bob = GetComponentInChildren<HeadBob>();
         if (bob != null) {
@@ -107,10 +108,5 @@ public class Player: MonoBehaviour {
     // -- queries --
     private bool IsLocked() {
         return fIsLocked;
-    }
-
-    // -- dependencies --
-    private Inventory Inventory() {
-        return GetComponent<Inventory>();
     }
 }

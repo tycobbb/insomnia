@@ -59,10 +59,8 @@ public class Game: MonoBehaviour {
             return;
         }
 
-        // initialize state
-        AdvanceToStep(Step.Phone);
-        // initialize bedroom/player position
-        EnterBedroom((b) => b.WarpToSheep());
+        // set initial state
+        Reset();
 
         // run debug setup if enabled
         if (fIsDebug) {
@@ -85,6 +83,12 @@ public class Game: MonoBehaviour {
     }
 
     // -- commands --
+    public void Reset() {
+        AdvanceToStep(Step.Phone);
+        EnterBedroom((b) => b.WarpToSheep());
+        fPlayer.SetPhoneTime("1:15 AM");
+    }
+
     public void EnterBedroom(Action<Bedroom> warp) {
         fBedroom.Show();
         warp(fBedroom);
@@ -113,6 +117,7 @@ public class Game: MonoBehaviour {
     public void ExitSheepRoom() {
         EnterBedroom((b) => b.WarpToFood());
         AdvanceStep();
+        fPlayer.SetPhoneTime("2:33 AM");
     }
 
     public void Catch(Sheep sheep) {
@@ -132,6 +137,7 @@ public class Game: MonoBehaviour {
     public void ExitKitchen() {
         EnterBedroom((b) => b.WarpToHall());
         AdvanceStep();
+        fPlayer.SetPhoneTime("3:47 AM");
     }
 
     // -- commands/step

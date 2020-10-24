@@ -139,7 +139,11 @@ public class FirstPersonDrifter: MonoBehaviour
         moveDirection.y -= gravity * Time.deltaTime;
 
         // Move the controller, and set grounded true or false depending on whether we're standing on something
-        grounded = (controller.Move(moveDirection * Time.deltaTime) & CollisionFlags.Below) != 0;
+        if (controller.enabled) {
+            grounded = (controller.Move(moveDirection * Time.deltaTime) & CollisionFlags.Below) != 0;
+        } else {
+            grounded = true;
+        }
     }
 
     // Store point that we're in contact with for use in FixedUpdate if needed
