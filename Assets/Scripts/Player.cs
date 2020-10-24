@@ -94,10 +94,12 @@ public class Player: MonoBehaviour {
     }
 
     private void Warp(Vector3 position) {
+        Log.Debug("Player - Warp: {0} Locked: {1}", position, fIsLocked);
+
         var c = GetComponent<CharacterController>();
         c.enabled = false;
         c.transform.position = position;
-        c.enabled = true;
+        c.enabled = !fIsLocked;
     }
 
     private void Look(Quaternion rotation) {
