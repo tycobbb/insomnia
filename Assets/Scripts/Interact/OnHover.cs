@@ -103,9 +103,7 @@ namespace Interact {
         // -- commands/transitions
         private IEnumerator ShowPrompt(bool isVisible) {
             if (isVisible && fMode == Mode.Dynamic) {
-                var pos = mSelected.transform.position;
-                pos += new Vector3(-0.5f, 0.5f);
-                fPrompt.transform.position = pos;
+                fPrompt.transform.position = GetDynamicAnchorPosition();
             }
 
             if (isVisible) {
@@ -143,16 +141,17 @@ namespace Interact {
             }
 
             // check if a spherecast hits this object
+            var t = camera.transform;
             var hits = Physics.SphereCastAll(
-                camera.transform.position,
+                t.position,
                 fRadius,
-                camera.transform.forward,
+                t.forward,
                 fMinDistance
             );
 
             // Debug.DrawRay(
-            //     camera.transform.position,
-            //     camera.transform.forward * 10.0f,
+            //     t.position,
+            //     t.forward * 10.0f,
             //     Color.green,
             //     0.5f
             // );
@@ -172,6 +171,23 @@ namespace Interact {
             }
 
             return null;
+        }
+
+        private Vector3 GetDynamicAnchorPosition() {
+            var t = mSelected.transform;
+            var box = mSelected.GetComponent<BoxCollider>();
+
+            // use the transform position if we can't find a box collider
+            if (box == null) {
+                return t.position + new Vector3(-0.5f, 0.5f);
+            }
+
+            // otherwise, use the box center
+            var pos = box.center;
+            pos = t.TransformPoint(pos);
+            pos.x -= 0.5f;
+
+            return pos;
         }
 
         // -- animations --

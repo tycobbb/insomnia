@@ -73,14 +73,14 @@ public class Game: MonoBehaviour {
         yield return 0;
         PickUp(GetComponentInChildren<Phone>());
         StandUp(GetComponentInChildren<Body>());
-        Open(GetComponentInChildren<Door>());
-        EnterSheepRoom();
-        Catch(GetComponentInChildren<Sheep>());
-        ExitSheepRoom();
-
-        yield return 0;
-        StandUp(GetComponentInChildren<Body>());
-        Open(GetComponentInChildren<Door>());
+        // Open(GetComponentInChildren<Door>());
+        // EnterSheepRoom();
+        // Catch(GetComponentInChildren<Sheep>());
+        // ExitSheepRoom();
+        //
+        // yield return 0;
+        // StandUp(GetComponentInChildren<Body>());
+        // Open(GetComponentInChildren<Door>());
     }
 
     // -- commands --
