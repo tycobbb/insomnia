@@ -32,6 +32,7 @@ namespace Interact {
         private float fMinDistance = 20.0f;
 
         // -- props --
+        private Target mTarget;
         private GameObject mHovered = null;
         private GameObject mSelected = null;
         private int mWaitFrame = 0;
@@ -39,6 +40,7 @@ namespace Interact {
 
         // -- lifecycle --
         protected void Start() {
+            // warn on configuration errors
             switch (fMode) {
                 case Mode.Fixed when GetComponent<Collider>() == null:
                     Debug.LogWarningFormat("OnHover requires at a collider on this object."); break;
@@ -46,7 +48,13 @@ namespace Interact {
                     Debug.LogWarningFormat("OnHover requires at least one child collider."); break;
             }
 
-            fPrompt.SetActive(false);
+            // store target
+            mTarget = GetComponentInParent<Target>();
+
+            // configure prompt
+            if (HasPrompt()) {
+                fPrompt.SetActive(false);
+            }
         }
 
         protected void Update() {
@@ -66,26 +74,25 @@ namespace Interact {
                 }
             }
 
-            // re-orient the prompt towards the camera if something is selected
-            if (mSelected != null) {
+            // if this item has a prompt and something is selected
+            if (HasPrompt() && mSelected != null) {
+                // re-orient the prompt towards the camera
                 fPrompt.transform.forward = MainCamera().transform.forward;
-            }
 
-            // if something is selected, send an interaction event on click
-            if (mSelected != null && Input.GetMouseButtonDown(0)) {
-                // send an event to the game
-                Game.Get().OnInteract(GetComponentInParent<Target>());
-
-                // and disable this component
-                Select(null);
-                this.enabled = false;
+                // interact on click
+                if (Input.GetMouseButtonDown(0)) {
+                    Interact();
+                }
             }
         }
 
         // -- commands --
         public void Reset() {
-            this.enabled = true;
-            fPrompt.SetActive(false);
+            enabled = true;
+
+            if (HasPrompt()) {
+                fPrompt.SetActive(false);
+            }
         }
 
         private void Hover(GameObject hovered) {
@@ -95,9 +102,27 @@ namespace Interact {
 
         private void Select(GameObject selected) {
             Log.Debug("OnHover - Select: {0}", selected);
-            mHovered = selected;
             mSelected = selected;
-            StartCoroutine(Transition(ShowPrompt(selected != null)));
+
+            // if this has a prompt to click, show it
+            if (HasPrompt()) {
+                StartCoroutine(Transition(ShowPrompt(selected != null)));
+            }
+            // otherwise, interact immediately on select
+            else if (selected != null) {
+                Interact();
+            }
+        }
+
+        private void Interact() {
+            Log.Debug("OnHover - Interact: {0}", mSelected);
+
+            // send an event to the game
+            Game.Get().OnInteract(mTarget);
+
+            // and disable this component
+            Select(null);
+            enabled = false;
         }
 
         // -- commands/transitions
@@ -237,6 +262,10 @@ namespace Interact {
 
         public IEnumerator Transition() {
             return mTransition;
+        }
+
+        private bool HasPrompt() {
+            return fPrompt != null;
         }
 
         // -- accessors --

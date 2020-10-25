@@ -9,7 +9,7 @@ public class Player: MonoBehaviour {
     // -- constants --
     private const string kStandUpAnim = "StandUp";
     private const float kStandUpAnimDuration = 2.75f;
-        
+
     // -- fields --
     [SerializeField]
     [Tooltip("Whether the player is locked in place.")]
@@ -22,7 +22,7 @@ public class Player: MonoBehaviour {
     [SerializeField]
     [Tooltip("The player's resting body.")]
     private Body fFixedBody;
-    
+
     [SerializeField]
     [Tooltip("The player's inventory.")]
     private Inventory fInventory;
@@ -50,7 +50,7 @@ public class Player: MonoBehaviour {
     public void SetPhoneTime(string time) {
         fInventory.SetPhoneTime(time);
     }
-    
+
     public void PickUp(Phone phone) {
         // hide the in-world phone
         // TODO: play "pickup" sound
@@ -79,7 +79,7 @@ public class Player: MonoBehaviour {
         Warp(fSleepLoc.position);
         // Look(fSleepLoc.rotation);
         SetLock(true);
-        
+
         // snap fixed body to attached body's position
         fFixedBody.transform.position = fBody.transform.position;
         fFixedBody.Show();
@@ -100,7 +100,7 @@ public class Player: MonoBehaviour {
         var frames = 5;
         var rotations = looks
             .Select((look) => look.AnimationTo(Quaternion.identity));
-        
+
         for (var i = 0; i < frames; i++) {
             var percent = (float) i / frames;
             yield return 0;
@@ -108,23 +108,23 @@ public class Player: MonoBehaviour {
                 rotate(percent);
             }
         }
-        
+
         // prepare scene for animation
         fFixedBody.StartRemove();
-        
+
         // play the animation
         fBody.SetActive(true);
         Animator().Play(kStandUpAnim);
     }
-    
+
     [UsedImplicitly] // AnimationEvent
     private void DidStandUp() {
         fBody.SetActive(false);
-        
+
         // unlock player and assign final position
         SetLock(false);
         Warp(transform.position);
-        
+
         // re-enable mouse look
         var looks = GetComponentsInChildren<MouseLook>();
         foreach (var look in looks) {
@@ -156,7 +156,7 @@ public class Player: MonoBehaviour {
     private bool IsLocked() {
         return fIsLocked;
     }
-    
+
     // -- dependencies --
     private Animator Animator() {
         return GetComponent<Animator>();

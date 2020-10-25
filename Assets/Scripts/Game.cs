@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.IO;
 using UnityEngine;
 
 public class Game: MonoBehaviour {
@@ -8,17 +9,18 @@ public class Game: MonoBehaviour {
     // -- types --
     [Flags]
     public enum Step: ushort {
-        Phone = 1 << 0,
-        Foot1 = 1 << 1,
-        Door1 = 1 << 2,
-        Sheep = 1 << 3,
-        Exit1 = 1 << 4,
-        Foot2 = 1 << 5,
-        Door2 = 1 << 6,
-        Food = 1 << 7,
-        Exit2 = 1 << 8,
-        Foot3 = 1 << 9,
-        Door3 = 1 << 10,
+        Fan = 1 << 0,
+        Phone = 1 << 1,
+        Foot1 = 1 << 2,
+        Door1 = 1 << 3,
+        Sheep = 1 << 4,
+        Exit1 = 1 << 5,
+        Foot2 = 1 << 6,
+        Door2 = 1 << 7,
+        Food = 1 << 8,
+        Exit2 = 1 << 9,
+        Foot3 = 1 << 10,
+        Door3 = 1 << 11,
     }
 
     // -- fields --
@@ -85,7 +87,7 @@ public class Game: MonoBehaviour {
 
     // -- commands --
     public void Reset() {
-        AdvanceToStep(Step.Phone);
+        AdvanceToStep(Step.Fan);
         EnterBedroom((b) => b.WarpToSheep());
         fPlayer.SetPhoneTime("1:15 AM");
     }
@@ -94,6 +96,10 @@ public class Game: MonoBehaviour {
         fBedroom.Show();
         warp(fBedroom);
         fPlayer.Sleep();
+    }
+
+    public void Identify(Fan _) {
+        AdvanceStep();
     }
 
     public void PickUp(Phone phone) {
@@ -177,6 +183,8 @@ public class Game: MonoBehaviour {
     // -- events --
     public void OnInteract(Interact.Target target) {
         switch (target) {
+            case Fan fan:
+                Identify(fan); break;
             case Phone phone:
                 PickUp(phone); break;
             case Body body:
@@ -190,7 +198,7 @@ public class Game: MonoBehaviour {
             case ExitKitchen _:
                 ExitKitchen(); break;
             default:
-                Debug.LogErrorFormat("Interacting with unknown target: {0}", target); break;
+                Log.Error("Game - Interact w/ Unknown Target: {0}", target); break;
         }
     }
 
