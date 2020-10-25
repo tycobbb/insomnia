@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Game: MonoBehaviour {
@@ -44,7 +45,7 @@ public class Game: MonoBehaviour {
     [Tooltip("The bedroom.")]
     private Bedroom fBedroom = null;
 
-    // -- model --
+    // -- props --
     private Step mStep;
     private Step? mNewStep;
 
@@ -177,6 +178,10 @@ public class Game: MonoBehaviour {
         return fIsFree;
     }
 
+    public Step GetStep() {
+        return mStep;
+    }
+
     public bool DidChangeToStep(Step step) {
         if (mNewStep == null) {
             return false;
@@ -186,7 +191,7 @@ public class Game: MonoBehaviour {
     }
 
     // -- events --
-    public void OnInteract(Interact.Target target) {
+    public void DidInteract(Interact.Target target) {
         switch (target) {
             case Fan fan:
                 IdentifyFan(fan); break;

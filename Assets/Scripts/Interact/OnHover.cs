@@ -118,7 +118,7 @@ namespace Interact {
             Log.Debug("OnHover - Interact: {0}", mSelected);
 
             // send an event to the game
-            Game.Get().OnInteract(mTarget);
+            Game.Get().DidInteract(mTarget);
 
             // and disable this component
             Select(null);
