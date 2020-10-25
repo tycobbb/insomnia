@@ -8,12 +8,16 @@ public class Body: MonoBehaviour, Interact.Target {
     private const string kWiggleLeftAnim = "WiggleLeft";
     private const string kWiggleRightAnim = "WiggleRight";
 
-    // -- fields --
-    [SerializeField]
-    [Tooltip("The fixed body's animator.")]
-    private Animator fAnimator = null;
+    // -- props --
+    private Interact.OnHover mHover;
+    private Animator mAnimator;
 
     // -- lifecycle --
+    protected void Start() {
+        mHover = GetComponentInChildren<Interact.OnHover>();
+        mAnimator = GetComponent<Animator>();
+    }
+
     protected void Update() {
         // enable on foot step
         if (Game.Get().DidChangeToStep(Game.Step.Foot1 | Game.Step.Foot2 | Game.Step.Foot3)) {
@@ -27,12 +31,12 @@ public class Body: MonoBehaviour, Interact.Target {
     }
 
     private void Enable() {
-        Hover().Reset();
+        mHover.Reset();
         Wiggle();
     }
 
     private void Wiggle() {
-        fAnimator.Play(GetRandomWiggleAnim());
+        mAnimator.Play(GetRandomWiggleAnim());
     }
 
     public void Remove() {
@@ -40,7 +44,7 @@ public class Body: MonoBehaviour, Interact.Target {
     }
 
     private IEnumerator RemoveAsync() {
-        yield return Hover().Transition();
+        yield return mHover.Transition();
         gameObject.SetActive(false);
     }
 
@@ -60,10 +64,5 @@ public class Body: MonoBehaviour, Interact.Target {
     [UsedImplicitly] // AnimationEvent
     private void DidWiggle() {
         Wiggle();
-    }
-
-    // -- Interact.Target --
-    public Interact.OnHover Hover() {
-        return GetComponentInChildren<Interact.OnHover>();
     }
 }
