@@ -5,6 +5,7 @@ using Random = UnityEngine.Random;
 
 public class Door: MonoBehaviour, Interact.Target {
     // -- constants --
+    private const Game.Step kStep = Game.Step.Door1 | Game.Step.Door2 | Game.Step.Door3;
     private const float kEnableDelay = 4.5f;
     private const string kOpenAnim = "Open";
     private const string kCloseAnim = "Close";
@@ -15,20 +16,21 @@ public class Door: MonoBehaviour, Interact.Target {
     private AudioClip fSheepSound;
 
     // -- props --
+    private Interact.OnHover mHover;
     private Animator mAnimator;
-    private AudioSource mAmbientAudio;
-    private Coroutine mAmbientSound;
+    private AmbientSound mAmbientSound;
 
     // -- lifecycle --
     protected void Start() {
+        mHover = GetComponentInChildren<Interact.OnHover>();
         mAnimator = GetComponent<Animator>();
-        mAmbientAudio = GetComponent<AudioSource>();
+        mAmbientSound = GetComponent<AmbientSound>();
     }
 
     protected void Update() {
         // enable on door step
         var game = Game.Get();
-        if (game.DidChangeToStep(Game.Step.Door1 | Game.Step.Door2 | Game.Step.Door3)) {
+        if (game.DidChangeToStep(kStep)) {
             Enable(game.GetStep());
         }
     }
@@ -41,39 +43,16 @@ public class Door: MonoBehaviour, Interact.Target {
     private IEnumerator EnableAsync(Game.Step step) {
         yield return new WaitForSeconds(kEnableDelay);
 
-        Hover().Reset();
+        mHover.Reset();
 
         switch (step) {
             case Game.Step.Door1:
-                PlayAmbientSound(fSheepSound); break;
-        }
-    }
-
-    private void PlayAmbientSound(AudioClip clip) {
-        StopAmbientSound();
-        mAmbientAudio.clip = clip;
-        mAmbientSound = StartCoroutine(PlayAmbientSoundAsync());
-    }
-
-    private void StopAmbientSound() {
-        if (mAmbientSound != null) {
-            StopCoroutine(mAmbientSound);
-        }
-
-        mAmbientSound = null;
-    }
-
-    private IEnumerator PlayAmbientSoundAsync() {
-        var duration = mAmbientAudio.clip.length;
-
-        while (true) {
-            mAmbientAudio.Play();
-            yield return new WaitForSeconds(duration + Random.Range(4.0f, 10.0f));
+                mAmbientSound.Play(fSheepSound); break;
         }
     }
 
     public void Open() {
-        StopAmbientSound();
+        mAmbientSound.Stop();
         // TODO: play door sound
         mAnimator.Play(kOpenAnim);
     }
@@ -81,10 +60,5 @@ public class Door: MonoBehaviour, Interact.Target {
     public void Close() {
         // TODO: play door sound
         mAnimator.Play(kCloseAnim);
-    }
-
-    // -- Interact.Target --
-    public Interact.OnHover Hover() {
-        return GetComponentInChildren<Interact.OnHover>();
     }
 }
