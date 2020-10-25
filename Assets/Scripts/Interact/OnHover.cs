@@ -174,12 +174,12 @@ namespace Interact {
                 fMinDistance
             );
 
-            // Debug.DrawRay(
-            //     t.position,
-            //     t.forward * 10.0f,
-            //     Color.green,
-            //     0.5f
-            // );
+            Debug.DrawRay(
+                t.position,
+                t.forward * fMinDistance,
+                Color.green,
+                0.5f
+            );
 
             if (fMode == Mode.Fixed) {
                 foreach (var hit in hits) {

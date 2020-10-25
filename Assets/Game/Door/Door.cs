@@ -48,6 +48,10 @@ public class Door: MonoBehaviour, Interact.Target {
         switch (step) {
             case Game.Step.Door1:
                 mAmbientSound.Play(fSheepSound); break;
+            case Game.Step.Door2:
+                break; // TODO: play a sound to cue the door to the kitchen
+            case Game.Step.Door3:
+                break; // TODO: play a sound to cue the door to the hall
         }
     }
 

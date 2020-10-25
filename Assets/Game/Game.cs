@@ -8,7 +8,7 @@ public class Game: MonoBehaviour {
 
     // -- types --
     [Flags]
-    public enum Step: ushort {
+    public enum Step: uint {
         Fan = 1 << 0,
         Phone = 1 << 1,
         Foot1 = 1 << 2,
@@ -16,12 +16,13 @@ public class Game: MonoBehaviour {
         Sheep = 1 << 4,
         Exit1 = 1 << 5,
         Foot2 = 1 << 6,
-        Door2 = 1 << 7,
-        Food = 1 << 8,
-        Exit2 = 1 << 9,
-        Foot3 = 1 << 10,
-        Door3 = 1 << 11,
-        Exit3 = 1 << 12,
+        Moon = 1 << 7,
+        Door2 = 1 << 8,
+        Food = 1 << 9,
+        Exit2 = 1 << 10,
+        Foot3 = 1 << 11,
+        Door3 = 1 << 12,
+        Exit3 = 1 << 13,
     }
 
     // -- fields --
@@ -30,7 +31,7 @@ public class Game: MonoBehaviour {
     private bool fIsFree = false;
 
     [SerializeField]
-    [Tooltip("Whether the game is in debug mode.")]
+    [Tooltip("Whether the game is executing debug steps.")]
     private bool fIsDebug = false;
 
     [SerializeField]
@@ -76,15 +77,17 @@ public class Game: MonoBehaviour {
         yield return 0;
         IdentifyFan(GetComponentInChildren<Fan>());
         PickUp(GetComponentInChildren<Phone>());
+        StandUp(GetComponentInChildren<Body>());
+        OpenDoor(GetComponentInChildren<Door>());
+        EnterSheepRoom();
+        CatchSheep(GetComponentInChildren<Sheep>());
+        ExitSheepRoom();
+
+        yield return 0;
         // StandUp(GetComponentInChildren<Body>());
         // Open(GetComponentInChildren<Door>());
-        // EnterSheepRoom();
-        // Catch(GetComponentInChildren<Sheep>());
-        // ExitSheepRoom();
-        //
-        // yield return 0;
-        // StandUp(GetComponentInChildren<Body>());
-        // Open(GetComponentInChildren<Door>());
+
+        fIsDebug = false;
     }
 
     // -- commands --
@@ -110,12 +113,18 @@ public class Game: MonoBehaviour {
     }
 
     private void StandUp(Body _) {
-        fPlayer.StandUp();
+        if (!fIsDebug) {
+            fPlayer.StandUp();
+        }
+
         AdvanceStep();
     }
 
     private void OpenDoor(Door door) {
-        door.Open();
+        if (!fIsDebug) {
+            door.Open();
+        }
+
         AdvanceStep();
     }
 
@@ -131,6 +140,10 @@ public class Game: MonoBehaviour {
 
     private void CatchSheep(Sheep sheep) {
         fPlayer.PickUp(sheep);
+        AdvanceStep();
+    }
+
+    private void IdentifyMoon(Moon _) {
         AdvanceStep();
     }
 
@@ -203,6 +216,8 @@ public class Game: MonoBehaviour {
                 OpenDoor(door); break;
             case Sheep sheep:
                 CatchSheep(sheep); break;
+            case Moon moon:
+                IdentifyMoon(moon); break;
             case Food food:
                 EatFood(food); break;
             case ExitKitchen _:
