@@ -4,7 +4,7 @@ public class Outhouse: MonoBehaviour {
     // -- fields --
     [SerializeField]
     [Tooltip("The collider that closes the outhouse.")]
-    private Collider fDoor;
+    private Collider fDoor = null;
 
     // -- lifecycle --
     protected void OnTriggerEnter(Collider closeSwitch) {

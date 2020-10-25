@@ -4,19 +4,19 @@ public class Bedroom: MonoBehaviour {
     // -- fields --
     [SerializeField]
     [Tooltip("The bedroom door.")]
-    private Door fDoor;
+    private Door fDoor = null;
 
     [SerializeField]
     [Tooltip("The entrance door to the sheep room.")]
-    private GameObject fSheepDoor;
+    private GameObject fSheepDoor = null;
 
     [SerializeField]
     [Tooltip("The entrance door to the kitchen.")]
-    private GameObject fKitchenDoor;
+    private GameObject fKitchenDoor = null;
 
     [SerializeField]
     [Tooltip("The entrance door to the hall.")]
-    private GameObject fHallDoor;
+    private GameObject fHallDoor = null;
 
     // -- lifecycle --
     // to mask out the house

@@ -9,25 +9,25 @@ public class Inventory: MonoBehaviour {
     // -- fields --
     [SerializeField]
     [Tooltip("The player's phone")]
-    private GameObject fInventoryPhone;
+    private GameObject fInventoryPhone = null;
 
     [SerializeField]
     [Tooltip("The player's sheep")]
-    private GameObject fInventorySheep;
+    private GameObject fInventorySheep = null;
 
     [SerializeField]
     [Tooltip("The player's food")]
-    private GameObject fInventoryFood;
+    private GameObject fInventoryFood = null;
 
     [SerializeField]
     [Tooltip("The position of the player's food item")]
-    private Transform fFoodPos;
+    private Transform fFoodPos = null;
 
     [SerializeField]
     [Tooltip("The player's phone's time.")]
-    private PhoneScreen fPhoneScreen;
+    private PhoneScreen fPhoneScreen = null;
 
-    // -- comands --
+    // -- commands --
     public void SetPhoneTime(string time) {
         fPhoneScreen.SetTime(time);
     }

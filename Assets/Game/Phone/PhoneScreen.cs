@@ -5,11 +5,11 @@ public class PhoneScreen: MonoBehaviour {
     // -- fields --
     [SerializeField]
     [Tooltip("The time label.")]
-    private TextMeshPro fTime;
+    private TextMeshPro fTime = null;
 
     [SerializeField]
     [Tooltip("The material when the screen is on.")]
-    private Material fScreenOn;
+    private Material fScreenOn = null;
 
     // -- commands --
     public void TurnOn() {

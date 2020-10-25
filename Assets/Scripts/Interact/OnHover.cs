@@ -9,7 +9,7 @@ namespace Interact {
         private const int kWaitFrames = 7;
 
         // -- types --
-        enum Mode {
+        private enum Mode {
             Fixed,
             Dynamic,
         }

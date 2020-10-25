@@ -1,10 +1,9 @@
 using System;
 using System.Collections;
-using System.IO;
 using UnityEngine;
 
 public class Game: MonoBehaviour {
-    private static Game _instance;
+    private static Game sInstance;
 
     // -- types --
     [Flags]
@@ -38,11 +37,11 @@ public class Game: MonoBehaviour {
 
     [SerializeField]
     [Tooltip("The player.")]
-    private Player fPlayer;
+    private Player fPlayer = null;
 
     [SerializeField]
     [Tooltip("The bedroom.")]
-    private Bedroom fBedroom;
+    private Bedroom fBedroom = null;
 
     // -- model --
     private Step mStep;
@@ -50,7 +49,7 @@ public class Game: MonoBehaviour {
 
     // -- lifecycle --
     protected void Awake() {
-        _instance = this;
+        sInstance = this;
 
         // configure services
         Log.SetLevel(fLogLevel);
@@ -92,27 +91,27 @@ public class Game: MonoBehaviour {
         fPlayer.SetPhoneTime("1:15 AM");
     }
 
-    public void EnterBedroom(Action<Bedroom> warp) {
+    private void EnterBedroom(Action<Bedroom> warp) {
         fBedroom.Show();
         warp(fBedroom);
         fPlayer.Sleep();
     }
 
-    public void Identify(Fan _) {
+    private void Identify(Fan _) {
         AdvanceStep();
     }
 
-    public void PickUp(Phone phone) {
+    private void PickUp(Phone phone) {
         fPlayer.PickUp(phone);
         AdvanceStep();
     }
 
-    public void StandUp(Body _) {
+    private void StandUp(Body _) {
         fPlayer.StandUp();
         AdvanceStep();
     }
 
-    public void Open(Door door) {
+    private void Open(Door door) {
         door.Open();
         AdvanceStep();
     }
@@ -127,7 +126,7 @@ public class Game: MonoBehaviour {
         fPlayer.SetPhoneTime("2:33 AM");
     }
 
-    public void Catch(Sheep sheep) {
+    private void Catch(Sheep sheep) {
         fPlayer.PickUp(sheep);
         AdvanceStep();
     }
@@ -136,12 +135,12 @@ public class Game: MonoBehaviour {
         fBedroom.Hide();
     }
 
-    public void Eat(Food food) {
+    private void Eat(Food food) {
         fPlayer.PickUp(food);
         AdvanceStep();
     }
 
-    public void ExitKitchen() {
+    private void ExitKitchen() {
         EnterBedroom((b) => b.WarpToHall());
         AdvanceStep();
         fPlayer.SetPhoneTime("3:47 AM");
@@ -204,6 +203,6 @@ public class Game: MonoBehaviour {
 
     // -- module --
     public static Game Get() {
-        return _instance;
+        return sInstance;
     }
 }

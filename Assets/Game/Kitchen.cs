@@ -4,7 +4,7 @@ public class Kitchen: MonoBehaviour {
     // -- fields --
     [SerializeField]
     [Tooltip("The wall between the kitchen and bedroom.")]
-    private GameObject fDoorWall;
+    private GameObject fDoorWall = null;
 
     // -- commands --
     private void Enter() {

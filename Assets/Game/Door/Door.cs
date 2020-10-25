@@ -2,18 +2,22 @@
 
 public class Door: MonoBehaviour, Interact.Target {
     // -- constants --
-    public const string kOpenAnim = "Open";
-    public const string kCloseAnim = "Close";
+    private const string kOpenAnim = "Open";
+    private const string kCloseAnim = "Close";
 
     // -- lifecycle --
     protected void Update() {
         // enable hover on door step
         if (Game.Get().DidChangeToStep(Game.Step.Door1 | Game.Step.Door2 | Game.Step.Door3)) {
-            Hover().Reset();
+            Enable();
         }
     }
 
     // -- commands --
+    private void Enable() {
+        Hover().Reset();
+    }
+
     public void Open() {
         Animator().Play(kOpenAnim);
     }

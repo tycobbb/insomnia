@@ -1,5 +1,4 @@
 ﻿using JetBrains.Annotations;
-using System;
 using System.Collections;
 using System.Linq;
 using UnityEngine;
@@ -8,7 +7,6 @@ using UnityEngine;
 public class Player: MonoBehaviour {
     // -- constants --
     private const string kStandUpAnim = "StandUp";
-    private const float kStandUpAnimDuration = 2.75f;
 
     // -- fields --
     [SerializeField]
@@ -17,23 +15,19 @@ public class Player: MonoBehaviour {
 
     [SerializeField]
     [Tooltip("The player's attached body.")]
-    private GameObject fBody;
+    private GameObject fBody = null;
 
     [SerializeField]
     [Tooltip("The player's resting body.")]
-    private Body fFixedBody;
+    private Body fFixedBody = null;
 
     [SerializeField]
     [Tooltip("The player's inventory.")]
-    private Inventory fInventory;
+    private Inventory fInventory = null;
 
     [SerializeField]
     [Tooltip("The transform to apply to the player on standing.")]
-    private Transform fSleepLoc;
-
-    [SerializeField]
-    [Tooltip("The transform to apply to the player on standing.")]
-    private Transform fStandLoc;
+    private Transform fSleepLoc = null;
 
     // -- lifecycle --
     protected void Start() {
@@ -92,7 +86,7 @@ public class Player: MonoBehaviour {
         StartCoroutine(StandUpAsync());
     }
 
-    public IEnumerator StandUpAsync() {
+    private IEnumerator StandUpAsync() {
         // disable mouse look
         var looks = GetComponentsInChildren<MouseLook>();
         foreach (var look in looks) {
@@ -100,9 +94,10 @@ public class Player: MonoBehaviour {
         }
 
         // recenter camera over a few frames
-        var frames = 5;
+        const int frames = 5;
         var rotations = looks
-            .Select((look) => look.AnimationTo(Quaternion.identity));
+            .Select((look) => look.AnimationTo(Quaternion.identity))
+            .ToArray();
 
         for (var i = 0; i < frames; i++) {
             var percent = (float) i / frames;
@@ -136,7 +131,7 @@ public class Player: MonoBehaviour {
         }
     }
 
-    public void SetLock(bool isLocked) {
+    private void SetLock(bool isLocked) {
         fIsLocked = isLocked;
 
         var c = GetComponent<CharacterController>();
