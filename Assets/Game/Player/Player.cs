@@ -3,7 +3,6 @@ using System.Collections;
 using System.Linq;
 using UnityEngine;
 
-[RequireComponent(typeof(Inventory))]
 public class Player: MonoBehaviour {
     // -- constants --
     private const string kStandUpAnim = "StandUp";

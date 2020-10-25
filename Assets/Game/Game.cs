@@ -20,6 +20,7 @@ public class Game: MonoBehaviour {
         Exit2 = 1 << 9,
         Foot3 = 1 << 10,
         Door3 = 1 << 11,
+        Exit3 = 1 << 12,
     }
 
     // -- fields --
@@ -144,6 +145,10 @@ public class Game: MonoBehaviour {
         EnterBedroom((b) => b.WarpToHall());
         AdvanceStep();
         fPlayer.SetPhoneTime("3:47 AM");
+    }
+
+    public void EnterHall() {
+        fBedroom.Hide();
     }
 
     // -- commands/step
