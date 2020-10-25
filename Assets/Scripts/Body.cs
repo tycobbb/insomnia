@@ -15,11 +15,11 @@ public class Body: MonoBehaviour, Interact.Target {
         gameObject.SetActive(true);
     }
 
-    public void StartRemove() {
-        StartCoroutine(Remove());
+    public void Remove() {
+        StartCoroutine(RemoveAsync());
     }
 
-    private IEnumerator Remove() {
+    private IEnumerator RemoveAsync() {
         yield return Hover().Transition();
         gameObject.SetActive(false);
     }

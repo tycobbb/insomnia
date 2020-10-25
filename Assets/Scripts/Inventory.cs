@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.Serialization;
 
 public class Inventory: MonoBehaviour {
     // -- constants --
@@ -24,7 +23,6 @@ public class Inventory: MonoBehaviour {
     [Tooltip("The position of the player's food item")]
     private Transform fFoodPos;
 
-    [FormerlySerializedAs("fPhoneTime")]
     [SerializeField]
     [Tooltip("The player's phone's time.")]
     private PhoneScreen fPhoneScreen;

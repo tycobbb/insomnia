@@ -54,7 +54,7 @@ public class Player: MonoBehaviour {
     public void PickUp(Phone phone) {
         // hide the in-world phone
         // TODO: play "pickup" sound
-        phone.StartRemove();
+        phone.Remove();
 
         // and move it to the inventory
         fInventory.PickUpPhone();
@@ -62,7 +62,7 @@ public class Player: MonoBehaviour {
 
     public void PickUp(Sheep sheep) {
         // hide the in-world sheep
-        sheep.StartRemove();
+        sheep.Remove();
 
         // and move it to the inventory
         fInventory.PickUpSheep();
@@ -72,6 +72,9 @@ public class Player: MonoBehaviour {
         // move in-world food into inventory
         // TODO: play "pickup" sound
         fInventory.PickUpFood(food.Selected());
+
+        // hide in-world food
+        food.Remove();
     }
 
     public void Sleep() {
@@ -110,7 +113,7 @@ public class Player: MonoBehaviour {
         }
 
         // prepare scene for animation
-        fFixedBody.StartRemove();
+        fFixedBody.Remove();
 
         // play the animation
         fBody.SetActive(true);

@@ -11,11 +11,11 @@ public class Food: MonoBehaviour, Interact.Target {
     }
 
     // -- commands --
-    public void StartRemove() {
-        StartCoroutine(Remove());
+    public void Remove() {
+        StartCoroutine(RemoveAsync());
     }
 
-    private IEnumerator Remove() {
+    private IEnumerator RemoveAsync() {
         yield return Hover().Transition();
     }
 
