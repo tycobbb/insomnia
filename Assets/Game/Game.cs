@@ -73,8 +73,9 @@ public class Game: MonoBehaviour {
 
     private IEnumerator DebugSetup() {
         yield return 0;
+        IdentifyFan(GetComponentInChildren<Fan>());
         PickUp(GetComponentInChildren<Phone>());
-        StandUp(GetComponentInChildren<Body>());
+        // StandUp(GetComponentInChildren<Body>());
         // Open(GetComponentInChildren<Door>());
         // EnterSheepRoom();
         // Catch(GetComponentInChildren<Sheep>());
@@ -98,7 +99,7 @@ public class Game: MonoBehaviour {
         fPlayer.Sleep();
     }
 
-    private void Identify(Fan _) {
+    private void IdentifyFan(Fan _) {
         AdvanceStep();
     }
 
@@ -112,7 +113,7 @@ public class Game: MonoBehaviour {
         AdvanceStep();
     }
 
-    private void Open(Door door) {
+    private void OpenDoor(Door door) {
         door.Open();
         AdvanceStep();
     }
@@ -127,7 +128,7 @@ public class Game: MonoBehaviour {
         fPlayer.SetPhoneTime("2:33 AM");
     }
 
-    private void Catch(Sheep sheep) {
+    private void CatchSheep(Sheep sheep) {
         fPlayer.PickUp(sheep);
         AdvanceStep();
     }
@@ -136,7 +137,7 @@ public class Game: MonoBehaviour {
         fBedroom.Hide();
     }
 
-    private void Eat(Food food) {
+    private void EatFood(Food food) {
         fPlayer.PickUp(food);
         AdvanceStep();
     }
@@ -188,17 +189,17 @@ public class Game: MonoBehaviour {
     public void OnInteract(Interact.Target target) {
         switch (target) {
             case Fan fan:
-                Identify(fan); break;
+                IdentifyFan(fan); break;
             case Phone phone:
                 PickUp(phone); break;
             case Body body:
                 StandUp(body); break;
             case Door door:
-                Open(door); break;
+                OpenDoor(door); break;
             case Sheep sheep:
-                Catch(sheep); break;
+                CatchSheep(sheep); break;
             case Food food:
-                Eat(food); break;
+                EatFood(food); break;
             case ExitKitchen _:
                 ExitKitchen(); break;
             default:
