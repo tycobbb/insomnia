@@ -32,6 +32,7 @@ namespace Interact {
         private float fMinDistance = 20.0f;
 
         // -- props --
+        private Target mTarget;
         private GameObject mHovered = null;
         private GameObject mSelected = null;
         private int mWaitFrame = 0;
@@ -39,6 +40,7 @@ namespace Interact {
 
         // -- lifecycle --
         protected void Start() {
+            // warn on configuration errors
             switch (fMode) {
                 case Mode.Fixed when GetComponent<Collider>() == null:
                     Debug.LogWarningFormat("OnHover requires at a collider on this object."); break;
@@ -46,7 +48,13 @@ namespace Interact {
                     Debug.LogWarningFormat("OnHover requires at least one child collider."); break;
             }
 
-            fPrompt.SetActive(false);
+            // store target
+            mTarget = GetComponentInParent<Target>();
+
+            // configure prompt
+            if (HasPrompt()) {
+                fPrompt.SetActive(false);
+            }
         }
 
         protected void Update() {
@@ -66,26 +74,25 @@ namespace Interact {
                 }
             }
 
-            // re-orient the prompt towards the camera if something is selected
-            if (mSelected != null) {
+            // if this item has a prompt and something is selected
+            if (HasPrompt() && mSelected != null) {
+                // re-orient the prompt towards the camera
                 fPrompt.transform.forward = MainCamera().transform.forward;
-            }
 
-            // if something is selected, send an interaction event on click
-            if (mSelected != null && Input.GetMouseButtonDown(0)) {
-                // send an event to the game
-                Game.Get().OnInteract(GetComponentInParent<Target>());
-
-                // and disable this component
-                Select(null);
-                this.enabled = false;
+                // interact on click
+                if (Input.GetMouseButtonDown(0)) {
+                    Interact();
+                }
             }
         }
 
         // -- commands --
         public void Reset() {
-            this.enabled = true;
-            fPrompt.SetActive(false);
+            enabled = true;
+
+            if (HasPrompt()) {
+                fPrompt.SetActive(false);
+            }
         }
 
         private void Hover(GameObject hovered) {
@@ -95,17 +102,33 @@ namespace Interact {
 
         private void Select(GameObject selected) {
             Log.Debug("OnHover - Select: {0}", selected);
-            mHovered = selected;
             mSelected = selected;
-            StartCoroutine(Transition(ShowPrompt(selected != null)));
+
+            // if this has a prompt to click, show it
+            if (HasPrompt()) {
+                StartCoroutine(Transition(ShowPrompt(selected != null)));
+            }
+            // otherwise, interact immediately on select
+            else if (selected != null) {
+                Interact();
+            }
+        }
+
+        private void Interact() {
+            Log.Debug("OnHover - Interact: {0}", mSelected);
+
+            // send an event to the game
+            Game.Get().OnInteract(mTarget);
+
+            // and disable this component
+            Select(null);
+            enabled = false;
         }
 
         // -- commands/transitions
         private IEnumerator ShowPrompt(bool isVisible) {
             if (isVisible && fMode == Mode.Dynamic) {
-                var pos = mSelected.transform.position;
-                pos += new Vector3(-0.5f, 0.5f);
-                fPrompt.transform.position = pos;
+                fPrompt.transform.position = GetDynamicAnchorPosition();
             }
 
             if (isVisible) {
@@ -143,16 +166,17 @@ namespace Interact {
             }
 
             // check if a spherecast hits this object
+            var t = camera.transform;
             var hits = Physics.SphereCastAll(
-                camera.transform.position,
+                t.position,
                 fRadius,
-                camera.transform.forward,
+                t.forward,
                 fMinDistance
             );
 
             // Debug.DrawRay(
-            //     camera.transform.position,
-            //     camera.transform.forward * 10.0f,
+            //     t.position,
+            //     t.forward * 10.0f,
             //     Color.green,
             //     0.5f
             // );
@@ -172,6 +196,23 @@ namespace Interact {
             }
 
             return null;
+        }
+
+        private Vector3 GetDynamicAnchorPosition() {
+            var t = mSelected.transform;
+            var box = mSelected.GetComponent<BoxCollider>();
+
+            // use the transform position if we can't find a box collider
+            if (box == null) {
+                return t.position + new Vector3(-0.5f, 0.5f);
+            }
+
+            // otherwise, use the box center
+            var pos = box.center;
+            pos = t.TransformPoint(pos);
+            pos.x -= 0.5f;
+
+            return pos;
         }
 
         // -- animations --
@@ -221,6 +262,10 @@ namespace Interact {
 
         public IEnumerator Transition() {
             return mTransition;
+        }
+
+        private bool HasPrompt() {
+            return fPrompt != null;
         }
 
         // -- accessors --

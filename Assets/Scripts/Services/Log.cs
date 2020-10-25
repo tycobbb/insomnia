@@ -4,6 +4,7 @@ public static class Log {
     // -- types --
     public enum Level {
         None,
+        Error,
         Info,
         Debug
     }
@@ -30,6 +31,14 @@ public static class Log {
         #if UNITY_EDITOR
             if (sLevel >= Level.Debug) {
                 U.Debug.LogFormat(format, args);
+            }
+        #endif
+    }
+
+    public static void Error(string format, params object[] args) {
+        #if UNITY_EDITOR
+            if (sLevel >= Level.Error) {
+                U.Debug.LogErrorFormat(format, args);
             }
         #endif
     }

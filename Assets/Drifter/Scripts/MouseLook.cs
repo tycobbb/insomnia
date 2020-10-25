@@ -45,7 +45,7 @@ public class MouseLook : MonoBehaviour
     Quaternion originalRotation;
 
     // !!!: Our custom hacks.
-    private const int kFramesToSkip = 1;
+    private const int kFramesToSkip = 2;
     private int mSkipFrameX = 0;
     private int mSkipFrameY = 0;
 
@@ -125,7 +125,7 @@ public class MouseLook : MonoBehaviour
             transform.localRotation = originalRotation * yQuaternion;
         }
     }
-    
+
     public void Reset() {
         if (axes == RotationAxes.MouseX) {
             offsetX = rotationX;
@@ -134,7 +134,7 @@ public class MouseLook : MonoBehaviour
             offsetY = rotationY;
             rotArrayY.Clear();
         }
-        
+
         originalRotation = transform.localRotation;
     }
 
