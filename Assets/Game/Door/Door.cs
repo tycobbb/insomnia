@@ -1,34 +1,64 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections;
+using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class Door: MonoBehaviour, Interact.Target {
     // -- constants --
-    public const string kOpenAnim = "Open";
-    public const string kCloseAnim = "Close";
+    private const Game.Step kStep = Game.Step.Door1 | Game.Step.Door2 | Game.Step.Door3;
+    private const float kEnableDelay = 4.5f;
+    private const string kOpenAnim = "Open";
+    private const string kCloseAnim = "Close";
+
+    // -- fields --
+    [SerializeField]
+    [Tooltip("The sheep sound.")]
+    private AudioClip fSheepSound;
+
+    // -- props --
+    private Interact.OnHover mHover;
+    private Animator mAnimator;
+    private AmbientSound mAmbientSound;
 
     // -- lifecycle --
+    protected void Start() {
+        mHover = GetComponentInChildren<Interact.OnHover>();
+        mAnimator = GetComponent<Animator>();
+        mAmbientSound = GetComponent<AmbientSound>();
+    }
+
     protected void Update() {
-        // enable hover on door step
-        if (Game.Get().DidChangeToStep(Game.Step.Door1 | Game.Step.Door2 | Game.Step.Door3)) {
-            Hover().Reset();
+        // enable on door step
+        var game = Game.Get();
+        if (game.DidChangeToStep(kStep)) {
+            Enable(game.GetStep());
         }
     }
 
     // -- commands --
+    private void Enable(Game.Step step) {
+        StartCoroutine(EnableAsync(step));
+    }
+
+    private IEnumerator EnableAsync(Game.Step step) {
+        yield return new WaitForSeconds(kEnableDelay);
+
+        mHover.Reset();
+
+        switch (step) {
+            case Game.Step.Door1:
+                mAmbientSound.Play(fSheepSound); break;
+        }
+    }
+
     public void Open() {
-        Animator().Play(kOpenAnim);
+        mAmbientSound.Stop();
+        // TODO: play door sound
+        mAnimator.Play(kOpenAnim);
     }
 
     public void Close() {
-        Animator().Play(kCloseAnim);
-    }
-
-    // -- Interact.Target --
-    public Interact.OnHover Hover() {
-        return GetComponentInChildren<Interact.OnHover>();
-    }
-
-    // -- dependencies --
-    private Animator Animator() {
-        return GetComponent<Animator>();
+        // TODO: play door sound
+        mAnimator.Play(kCloseAnim);
     }
 }

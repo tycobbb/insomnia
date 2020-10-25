@@ -1,10 +1,10 @@
 using System;
 using System.Collections;
-using System.IO;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Game: MonoBehaviour {
-    private static Game _instance;
+    private static Game sInstance;
 
     // -- types --
     [Flags]
@@ -21,6 +21,7 @@ public class Game: MonoBehaviour {
         Exit2 = 1 << 9,
         Foot3 = 1 << 10,
         Door3 = 1 << 11,
+        Exit3 = 1 << 12,
     }
 
     // -- fields --
@@ -38,19 +39,19 @@ public class Game: MonoBehaviour {
 
     [SerializeField]
     [Tooltip("The player.")]
-    private Player fPlayer;
+    private Player fPlayer = null;
 
     [SerializeField]
     [Tooltip("The bedroom.")]
-    private Bedroom fBedroom;
+    private Bedroom fBedroom = null;
 
-    // -- model --
+    // -- props --
     private Step mStep;
     private Step? mNewStep;
 
     // -- lifecycle --
     protected void Awake() {
-        _instance = this;
+        sInstance = this;
 
         // configure services
         Log.SetLevel(fLogLevel);
@@ -73,8 +74,9 @@ public class Game: MonoBehaviour {
 
     private IEnumerator DebugSetup() {
         yield return 0;
+        IdentifyFan(GetComponentInChildren<Fan>());
         PickUp(GetComponentInChildren<Phone>());
-        StandUp(GetComponentInChildren<Body>());
+        // StandUp(GetComponentInChildren<Body>());
         // Open(GetComponentInChildren<Door>());
         // EnterSheepRoom();
         // Catch(GetComponentInChildren<Sheep>());
@@ -92,27 +94,27 @@ public class Game: MonoBehaviour {
         fPlayer.SetPhoneTime("1:15 AM");
     }
 
-    public void EnterBedroom(Action<Bedroom> warp) {
+    private void EnterBedroom(Action<Bedroom> warp) {
         fBedroom.Show();
         warp(fBedroom);
         fPlayer.Sleep();
     }
 
-    public void Identify(Fan _) {
+    private void IdentifyFan(Fan _) {
         AdvanceStep();
     }
 
-    public void PickUp(Phone phone) {
+    private void PickUp(Phone phone) {
         fPlayer.PickUp(phone);
         AdvanceStep();
     }
 
-    public void StandUp(Body _) {
+    private void StandUp(Body _) {
         fPlayer.StandUp();
         AdvanceStep();
     }
 
-    public void Open(Door door) {
+    private void OpenDoor(Door door) {
         door.Open();
         AdvanceStep();
     }
@@ -127,7 +129,7 @@ public class Game: MonoBehaviour {
         fPlayer.SetPhoneTime("2:33 AM");
     }
 
-    public void Catch(Sheep sheep) {
+    private void CatchSheep(Sheep sheep) {
         fPlayer.PickUp(sheep);
         AdvanceStep();
     }
@@ -136,15 +138,19 @@ public class Game: MonoBehaviour {
         fBedroom.Hide();
     }
 
-    public void Eat(Food food) {
+    private void EatFood(Food food) {
         fPlayer.PickUp(food);
         AdvanceStep();
     }
 
-    public void ExitKitchen() {
+    private void ExitKitchen() {
         EnterBedroom((b) => b.WarpToHall());
         AdvanceStep();
         fPlayer.SetPhoneTime("3:47 AM");
+    }
+
+    public void EnterHall() {
+        fBedroom.Hide();
     }
 
     // -- commands/step
@@ -172,6 +178,10 @@ public class Game: MonoBehaviour {
         return fIsFree;
     }
 
+    public Step GetStep() {
+        return mStep;
+    }
+
     public bool DidChangeToStep(Step step) {
         if (mNewStep == null) {
             return false;
@@ -181,20 +191,20 @@ public class Game: MonoBehaviour {
     }
 
     // -- events --
-    public void OnInteract(Interact.Target target) {
+    public void DidInteract(Interact.Target target) {
         switch (target) {
             case Fan fan:
-                Identify(fan); break;
+                IdentifyFan(fan); break;
             case Phone phone:
                 PickUp(phone); break;
             case Body body:
                 StandUp(body); break;
             case Door door:
-                Open(door); break;
+                OpenDoor(door); break;
             case Sheep sheep:
-                Catch(sheep); break;
+                CatchSheep(sheep); break;
             case Food food:
-                Eat(food); break;
+                EatFood(food); break;
             case ExitKitchen _:
                 ExitKitchen(); break;
             default:
@@ -204,6 +214,6 @@ public class Game: MonoBehaviour {
 
     // -- module --
     public static Game Get() {
-        return _instance;
+        return sInstance;
     }
 }

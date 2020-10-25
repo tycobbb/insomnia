@@ -8,11 +8,11 @@ public class Phone: MonoBehaviour, Interact.Target {
     // -- fields --
     [SerializeField]
     [Tooltip("The phone's screen.")]
-    private PhoneScreen fScreen;
+    private PhoneScreen fScreen = null;
 
     [SerializeField]
     [Tooltip("The notification sound.")]
-    private AudioSource fNotification;
+    private AudioSource fNotification = null;
 
     // -- lifecycle --
     protected void Update() {

@@ -11,7 +11,7 @@ public class Body: MonoBehaviour, Interact.Target {
     // -- fields --
     [SerializeField]
     [Tooltip("The fixed body's animator.")]
-    private Animator fAnimator;
+    private Animator fAnimator = null;
 
     // -- lifecycle --
     protected void Update() {
@@ -26,12 +26,12 @@ public class Body: MonoBehaviour, Interact.Target {
         gameObject.SetActive(true);
     }
 
-    public void Enable() {
+    private void Enable() {
         Hover().Reset();
         Wiggle();
     }
 
-    public void Wiggle() {
+    private void Wiggle() {
         fAnimator.Play(GetRandomWiggleAnim());
     }
 
@@ -45,7 +45,7 @@ public class Body: MonoBehaviour, Interact.Target {
     }
 
     // -- queries --
-    private string GetRandomWiggleAnim() {
+    private static string GetRandomWiggleAnim() {
         switch (Random.Range(0, 6)) {
             case 0:
                 return kWiggleLeftAnim;
@@ -53,7 +53,7 @@ public class Body: MonoBehaviour, Interact.Target {
                 return kWiggleRightAnim;
             default:
                 return kWiggleWaitAnim;
-        };
+        }
     }
 
     // -- events --
