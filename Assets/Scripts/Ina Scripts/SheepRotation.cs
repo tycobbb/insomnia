@@ -9,11 +9,11 @@ public class SheepRotation : MonoBehaviour
 
     public float seeDistance = 5f; // 양이 보이기 시작할 범위
     public float turnSpeed = 4f; // 양이 보이기 시작할 범위
-    
+
     private void Start()
     {
         // 플레이어의 트랜스폼 정보 저장
-        player = GameObject.FindWithTag("Player_Sheep").transform;
+        player = Camera.main.transform;
 
         // 양의 첫번째 자식(Base 61) 저장
         sheep_model = transform.GetChild(0).gameObject;
