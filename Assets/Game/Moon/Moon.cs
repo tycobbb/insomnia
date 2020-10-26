@@ -5,6 +5,7 @@ using UnityEngine;
 public class Moon: MonoBehaviour, Interact.Target {
     // -- constants --
     private const float kEnableDelay = 3.5f;
+    private const float kAutoInteractDelay = 5.0f;
     private const string kShowMoonAnim = "ShowMoon";
 
     // -- props --
@@ -29,9 +30,15 @@ public class Moon: MonoBehaviour, Interact.Target {
     }
 
     private IEnumerator EnableAsync() {
+        // enable after a few seconds
         yield return new WaitForSeconds(kEnableDelay);
-
         mHover.Reset();
         mAnimator.Play(kShowMoonAnim);
+
+        // auto-interact after a few seconds
+        yield return new WaitForSeconds(kAutoInteractDelay);
+        if (mHover.enabled) {
+            mHover.InteractWith(this);
+        }
     }
 }
