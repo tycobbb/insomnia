@@ -69,11 +69,11 @@ public class Game: MonoBehaviour {
 
         // run debug setup if enabled
         if (fIsDebug) {
-            StartCoroutine(DebugSetup());
+            StartCoroutine(DebugAsync());
         }
     }
 
-    private IEnumerator DebugSetup() {
+    private IEnumerator DebugAsync() {
         yield return 0;
         IdentifyFan(GetComponentInChildren<Fan>());
         PickUp(GetComponentInChildren<Phone>());

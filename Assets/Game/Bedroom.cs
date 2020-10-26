@@ -19,10 +19,10 @@ public class Bedroom: MonoBehaviour {
     private GameObject fHallDoor = null;
 
     // -- lifecycle --
-    // to mask out the house
     // protected void Start() {
+    //     // mask out the house
     //     var renderers = GetComponentsInChildren<Renderer>();
-
+    //
     //     foreach (var renderer in renderers) {
     //         if (renderer.material.renderQueue < 2001 && renderer.gameObject != fDoor) {
     //             renderer.material.renderQueue = 9001;

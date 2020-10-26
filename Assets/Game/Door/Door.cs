@@ -13,7 +13,7 @@ public class Door: MonoBehaviour, Interact.Target {
     // -- fields --
     [SerializeField]
     [Tooltip("The sheep sound.")]
-    private AudioClip fSheepSound;
+    private AudioClip fSheepSound = null;
 
     // -- props --
     private Interact.OnHover mHover;
@@ -28,7 +28,6 @@ public class Door: MonoBehaviour, Interact.Target {
     }
 
     protected void Update() {
-        // enable on door step
         var game = Game.Get();
         if (game.DidChangeToStep(kStep)) {
             Enable(game.GetStep());
@@ -41,7 +40,9 @@ public class Door: MonoBehaviour, Interact.Target {
     }
 
     private IEnumerator EnableAsync(Game.Step step) {
-        yield return new WaitForSeconds(kEnableDelay);
+        if (step != Game.Step.Door2) {
+            yield return new WaitForSeconds(kEnableDelay);
+        }
 
         mHover.Reset();
 

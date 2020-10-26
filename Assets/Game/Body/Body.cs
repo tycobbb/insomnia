@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Body: MonoBehaviour, Interact.Target {
     // -- constants --
+    private const Game.Step kStep = Game.Step.Foot1 | Game.Step.Foot2 | Game.Step.Foot3;
     private const string kWiggleWaitAnim = "WiggleWait";
     private const string kWiggleLeftAnim = "WiggleLeft";
     private const string kWiggleRightAnim = "WiggleRight";
@@ -19,8 +20,7 @@ public class Body: MonoBehaviour, Interact.Target {
     }
 
     protected void Update() {
-        // enable on foot step
-        if (Game.Get().DidChangeToStep(Game.Step.Foot1 | Game.Step.Foot2 | Game.Step.Foot3)) {
+        if (Game.Get().DidChangeToStep(kStep)) {
             Enable();
         }
     }
