@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Game: MonoBehaviour {
@@ -78,24 +77,24 @@ public class Game: MonoBehaviour {
         IdentifyFan(GetComponentInChildren<Fan>());
         PickUp(GetComponentInChildren<Phone>());
         StandUp(GetComponentInChildren<Body>());
-        ExitBedroom(GetComponentInChildren<BedroomExit>());
+        // ExitBedroom(GetComponentInChildren<BedroomExit>());
 
-        var r1 = GetComponentInChildren<Field>();
-        DidStartEnterRoom(r1);
-        DidFinishEnterRoom(r1);
-        CatchSheep(GetComponentInChildren<Sheep>(true));
-        ExitField();
-
-        yield return 0;
-        StandUp(GetComponentInChildren<Body>());
-        IdentifyMoon(GetComponentInChildren<Moon>(true));
-        ExitBedroom(GetComponentInChildren<BedroomExit>());
-
-        var r2 = GetComponentInChildren<Kitchen>();
-        DidStartEnterRoom(r2);
-        DidFinishEnterRoom(r2);
-        EatFood(GetComponentInChildren<Food>(true));
-        ExitKitchen();
+        // var r1 = GetComponentInChildren<Field>();
+        // DidStartEnterRoom(r1);
+        // DidFinishEnterRoom(r1);
+        // CatchSheep(GetComponentInChildren<Sheep>(true));
+        // ExitField();
+        //
+        // yield return 0;
+        // StandUp(GetComponentInChildren<Body>());
+        // IdentifyMoon(GetComponentInChildren<Moon>(true));
+        // ExitBedroom(GetComponentInChildren<BedroomExit>());
+        //
+        // var r2 = GetComponentInChildren<Kitchen>();
+        // DidStartEnterRoom(r2);
+        // DidFinishEnterRoom(r2);
+        // EatFood(GetComponentInChildren<Food>(true));
+        // ExitKitchen();
 
         fIsDebug = false;
     }
