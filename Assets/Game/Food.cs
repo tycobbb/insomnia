@@ -34,6 +34,11 @@ public class Food: MonoBehaviour, Interact.Target {
 
     // -- queries --
     public GameObject Selected() {
-        return mHover.Selected();
+        var selected = mHover.Selected();
+        if (selected != null) {
+            return selected;
+        }
+
+        return gameObject;
     }
 }

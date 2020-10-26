@@ -35,9 +35,6 @@ public class Bedroom: MonoBehaviour {
         t.parent = transform.parent;
     }
 
-    protected void Start() {
-    }
-
     // protected void Start() {
     //     // mask out the house
     //     var renderers = GetComponentsInChildren<Renderer>();

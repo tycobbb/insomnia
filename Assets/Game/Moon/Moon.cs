@@ -8,13 +8,18 @@ public class Moon: MonoBehaviour, Interact.Target {
     private const float kAutoInteractDelay = 5.0f;
     private const string kShowMoonAnim = "ShowMoon";
 
+    // -- fields --
+    [SerializeField]
+    [Tooltip("The actual moon.")]
+    private GameObject fMoon = null;
+
     // -- props --
     private Interact.OnHover mHover;
     private Animator mAnimator;
 
     // -- lifecycle --
-    void Start() {
-        mHover = GetComponentInChildren<Interact.OnHover>();
+    void Awake() {
+        mHover = fMoon.GetComponent<Interact.OnHover>();
         mAnimator = GetComponent<Animator>();
     }
 
@@ -32,6 +37,8 @@ public class Moon: MonoBehaviour, Interact.Target {
     private IEnumerator EnableAsync() {
         // enable after a few seconds
         yield return new WaitForSeconds(kEnableDelay);
+
+        fMoon.SetActive(true);
         mHover.Reset();
         mAnimator.Play(kShowMoonAnim);
 
