@@ -80,11 +80,11 @@ public class Game: MonoBehaviour {
         StandUp(GetComponentInChildren<Body>());
         OpenDoor(GetComponentInChildren<Door>());
 
-        var room = GetComponentInChildren<SheepRoom>();
+        var room = GetComponentInChildren<Field>();
         DidStartEnterRoom(room);
         DidFinishEnterRoom(room);
         CatchSheep(GetComponentInChildren<Sheep>(true));
-        ExitSheepRoom();
+        ExitField();
 
         yield return 0;
         StandUp(GetComponentInChildren<Body>());
@@ -97,7 +97,7 @@ public class Game: MonoBehaviour {
     // -- commands --
     public void Reset() {
         AdvanceToStep(Step.Fan);
-        EnterBedroom((b) => b.ConnectToSheep());
+        EnterBedroom((b) => b.ConnectToField());
         fPlayer.SetPhoneTime("1:15 AM");
     }
 
@@ -129,11 +129,11 @@ public class Game: MonoBehaviour {
         AdvanceStep();
     }
 
-    private void EnterSheepRoom(SheepRoom room) {
+    private void EnterField(Field room) {
         StartEnterRoom(room);
     }
 
-    public void ExitSheepRoom() {
+    public void ExitField() {
         EnterBedroom((b) => b.ConnectToKitchen());
         AdvanceStep();
         fPlayer.SetPhoneTime("2:33 AM");
@@ -236,8 +236,8 @@ public class Game: MonoBehaviour {
 
     public void DidStartEnterRoom(Room target) {
         switch (target) {
-            case SheepRoom room:
-                EnterSheepRoom(room); break;
+            case Field room:
+                EnterField(room); break;
             case Kitchen room:
                 EnterKitchen(room); break;
             case Hall room:

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class SheepRoom: MonoBehaviour, Room {
+public class Field: MonoBehaviour, Room {
     // -- fields --
     [SerializeField]
     [Tooltip("The room's entrance door.")]

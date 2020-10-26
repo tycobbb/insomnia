@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
+using UnityEngine.Serialization;
 
 public class Bedroom: MonoBehaviour {
     // -- fields --
+    [FormerlySerializedAs("fSheepRoom")]
     [SerializeField]
     [Tooltip("The sheep room.")]
-    private SheepRoom fSheepRoom = null;
+    private Field fField = null;
 
     [SerializeField]
     [Tooltip("The kitchen.")]
@@ -62,8 +64,8 @@ public class Bedroom: MonoBehaviour {
         mVolume.SetActive(false);
     }
 
-    public void ConnectToSheep() {
-        ConnectToRoom(fSheepRoom);
+    public void ConnectToField() {
+        ConnectToRoom(fField);
     }
 
     public void ConnectToKitchen() {
