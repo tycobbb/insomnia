@@ -22,6 +22,6 @@ public class Sheep: MonoBehaviour, Interact.Target {
 
     // -- Interact.Target --
     public Interact.OnHover Hover() {
-        return GetComponent<Interact.OnHover>();
+        return GetComponentInChildren<Interact.OnHover>();
     }
 }

@@ -10,9 +10,12 @@ public class SheepRoom: MonoBehaviour, Room {
     [Tooltip("The sheeps.")]
     private GameObject fSheeps = null;
 
-    // -- commands --
-    public void Enter() {
-        fSheeps.SetActive(true);
+    // -- props --
+    private RoomPost mPost;
+
+    // -- lifecycle --
+    protected void Awake() {
+        mPost = GetComponentInChildren<RoomPost>();
     }
 
     // -- Room --
@@ -20,8 +23,17 @@ public class SheepRoom: MonoBehaviour, Room {
     public void SetActive(bool isActive) {
         gameObject.SetActive(isActive);
 
-        // disable sheeps until entering the room
+        // disable sheeps and unblended post-processing until entering the room
         fSheeps.SetActive(false);
+        mPost.SetBlended(true);
+    }
+
+    public void EnterStart() {
+        fSheeps.SetActive(true);
+    }
+
+    public void EnterEnd() {
+        mPost.SetBlended(false);
     }
 
     // -- Room/queries

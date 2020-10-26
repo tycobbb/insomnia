@@ -8,14 +8,27 @@ public class Hall : MonoBehaviour, Room {
     [SerializeField] [Tooltip("The wall between the room and bedroom.")]
     private GameObject fDoorWall = null;
 
+    // -- props --
+    private RoomPost mPost;
+
+    // -- lifecycle --
+    protected void Awake() {
+        mPost = GetComponentInChildren<RoomPost>();
+    }
+
     // -- Room --
     // -- Room/commands
-    public void Enter() {
+    public void SetActive(bool isActive) {
+        gameObject.SetActive(isActive);
+        mPost.SetBlended(true);
+    }
+
+    public void EnterStart() {
         fDoorWall.SetActive(true);
     }
 
-    public void SetActive(bool isActive) {
-        gameObject.SetActive(isActive);
+    public void EnterEnd() {
+        mPost.SetBlended(false);
     }
 
     // -- Room/queries

@@ -28,18 +28,31 @@ public class Player: MonoBehaviour {
     [Tooltip("The transform to apply to the player on standing.")]
     private Transform fSleepLoc = null;
 
-    // -- lifecycle --
-    protected void Start() {
-        if (Game.Get().IsFree()) {
-            return;
-        }
+    // -- props --
+    private Animator mAnimator;
+    private CharacterController mCharacter;
+    private HeadBob mHeadBob;
+    private MouseLook[] mControls;
 
-        if (IsLocked()) {
-            SetLock(true);
-        }
+    // -- lifecycle --
+    protected void Awake() {
+        mAnimator = GetComponent<Animator>();
+        mCharacter = GetComponent<CharacterController>();
+        mHeadBob = GetComponentInChildren<HeadBob>();
+        mControls = GetComponentsInChildren<MouseLook>();
     }
 
     // -- commands --
+    public void Sleep() {
+        // move to bed and lock player
+        Warp(fSleepLoc.position);
+        SetLock(true);
+
+        // snap fixed body to attached body's position
+        fFixedBody.transform.position = fBody.transform.position;
+        fFixedBody.Show();
+    }
+
     public void SetPhoneTime(string time) {
         fInventory.SetPhoneTime(time);
     }
@@ -70,31 +83,19 @@ public class Player: MonoBehaviour {
         food.Remove();
     }
 
-    public void Sleep() {
-        // move to bed and lock player
-        Warp(fSleepLoc.position);
-        // Look(fSleepLoc.rotation);
-        SetLock(true);
-
-        // snap fixed body to attached body's position
-        fFixedBody.transform.position = fBody.transform.position;
-        fFixedBody.Show();
+    public void StandUp(bool isAnimated = true) {
+        StartCoroutine(StandUpAsync(isAnimated));
     }
 
-    public void StandUp() {
-        StartCoroutine(StandUpAsync());
-    }
-
-    private IEnumerator StandUpAsync() {
+    private IEnumerator StandUpAsync(bool isAnimated) {
         // disable mouse look
-        var looks = GetComponentsInChildren<MouseLook>();
-        foreach (var look in looks) {
-            look.enabled = false;
+        foreach (var mouse in mControls) {
+            mouse.enabled = false;
         }
 
         // recenter camera over a few frames
         const int frames = 5;
-        var rotations = looks
+        var rotations = mControls
             .Select((look) => look.AnimationTo(Quaternion.identity))
             .ToArray();
 
@@ -111,7 +112,12 @@ public class Player: MonoBehaviour {
 
         // play the animation
         fBody.SetActive(true);
-        Animator().Play(kStandUpAnim);
+
+        if (isAnimated) {
+            mAnimator.Play(kStandUpAnim);
+        } else {
+            DidStandUp();
+        }
     }
 
     [UsedImplicitly] // AnimationEvent
@@ -123,39 +129,26 @@ public class Player: MonoBehaviour {
         Warp(transform.position);
 
         // re-enable mouse look
-        var looks = GetComponentsInChildren<MouseLook>();
-        foreach (var look in looks) {
-            look.Reset();
-            look.enabled = true;
+        foreach (var mouse in mControls) {
+            mouse.Reset();
+            mouse.enabled = true;
         }
     }
 
     private void SetLock(bool isLocked) {
+        Log.Debug("Player - Lock: {0}", isLocked);
+
         fIsLocked = isLocked;
-
-        var c = GetComponent<CharacterController>();
-        c.enabled = !isLocked;
-
-        var h = GetComponentInChildren<HeadBob>();
-        h.enabled = !isLocked;
+        mCharacter.enabled = !isLocked;
+        mHeadBob.enabled = !isLocked;
     }
 
     private void Warp(Vector3 position) {
         Log.Debug("Player - Warp: {0}", position);
 
-        var c = GetComponent<CharacterController>();
+        var c = mCharacter;
         c.enabled = false;
         c.transform.position = position;
         c.enabled = !fIsLocked;
-    }
-
-    // -- queries --
-    private bool IsLocked() {
-        return fIsLocked;
-    }
-
-    // -- dependencies --
-    private Animator Animator() {
-        return GetComponent<Animator>();
     }
 }

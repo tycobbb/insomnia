@@ -79,15 +79,19 @@ public class Game: MonoBehaviour {
         PickUp(GetComponentInChildren<Phone>());
         StandUp(GetComponentInChildren<Body>());
         OpenDoor(GetComponentInChildren<Door>());
-        EnterSheepRoom(GetComponentInChildren<SheepRoom>());
-        CatchSheep(GetComponentInChildren<Sheep>());
+
+        var room = GetComponentInChildren<SheepRoom>();
+        DidStartEnterRoom(room);
+        DidFinishEnterRoom(room);
+        CatchSheep(GetComponentInChildren<Sheep>(true));
         ExitSheepRoom();
 
         yield return 0;
-        fIsDebug = false;
         StandUp(GetComponentInChildren<Body>());
-        IdentifyMoon(GetComponentInChildren<Moon>());
-        OpenDoor(GetComponentInChildren<Door>());
+        IdentifyMoon(GetComponentInChildren<Moon>(true));
+        // OpenDoor(GetComponentInChildren<Door>());
+
+        fIsDebug = false;
     }
 
     // -- commands --
@@ -113,10 +117,7 @@ public class Game: MonoBehaviour {
     }
 
     private void StandUp(Body _) {
-        if (!fIsDebug) {
-            fPlayer.StandUp();
-        }
-
+        fPlayer.StandUp(isAnimated: !fIsDebug);
         AdvanceStep();
     }
 
@@ -128,9 +129,8 @@ public class Game: MonoBehaviour {
         AdvanceStep();
     }
 
-    public void EnterSheepRoom(SheepRoom room) {
-        room.Enter();
-        fBedroom.Hide();
+    private void EnterSheepRoom(SheepRoom room) {
+        StartEnterRoom(room);
     }
 
     public void ExitSheepRoom() {
@@ -148,9 +148,8 @@ public class Game: MonoBehaviour {
         AdvanceStep();
     }
 
-    public void EnterKitchen(Kitchen room) {
-        room.Enter();
-        fBedroom.Hide();
+    private void EnterKitchen(Kitchen room) {
+        StartEnterRoom(room);
     }
 
     private void EatFood(Food food) {
@@ -164,9 +163,18 @@ public class Game: MonoBehaviour {
         fPlayer.SetPhoneTime("3:47 AM");
     }
 
-    public void EnterHall(Hall room) {
-        room.Enter();
+    private void EnterHall(Hall room) {
+        StartEnterRoom(room);
+    }
+
+    private void StartEnterRoom(Room room) {
+        room.EnterStart();
         fBedroom.Hide();
+    }
+
+    private void FinishEnterRoom(Room room) {
+        room.EnterEnd();
+        fBedroom.HideVolume();
     }
 
     // -- commands/step
@@ -190,10 +198,6 @@ public class Game: MonoBehaviour {
     }
 
     // -- queries --
-    public bool IsFree() {
-        return fIsFree;
-    }
-
     public Step GetStep() {
         return mStep;
     }
@@ -207,17 +211,6 @@ public class Game: MonoBehaviour {
     }
 
     // -- events --
-    public void DidEnter(Room target) {
-        switch (target) {
-            case SheepRoom room:
-                EnterSheepRoom(room); break;
-            case Kitchen room:
-                EnterKitchen(room); break;
-            case Hall room:
-                EnterHall(room); break;
-        }
-    }
-
     public void DidInteract(Interact.Target target) {
         switch (target) {
             case Fan fan:
@@ -238,6 +231,24 @@ public class Game: MonoBehaviour {
                 ExitKitchen(); break;
             default:
                 Log.Error("Game - Interact w/ Unknown Target: {0}", target); break;
+        }
+    }
+
+    public void DidStartEnterRoom(Room target) {
+        switch (target) {
+            case SheepRoom room:
+                EnterSheepRoom(room); break;
+            case Kitchen room:
+                EnterKitchen(room); break;
+            case Hall room:
+                EnterHall(room); break;
+        }
+    }
+
+    public void DidFinishEnterRoom(Room room) {
+        switch (room) {
+            default:
+                FinishEnterRoom(room); break;
         }
     }
 
