@@ -87,8 +87,8 @@ public class Game: MonoBehaviour {
         ExitField();
 
         yield return 0;
-        StandUp(GetComponentInChildren<Body>());
-        IdentifyMoon(GetComponentInChildren<Moon>(true));
+        // StandUp(GetComponentInChildren<Body>());
+        // IdentifyMoon(GetComponentInChildren<Moon>(true));
         // OpenDoor(GetComponentInChildren<Door>());
 
         fIsDebug = false;

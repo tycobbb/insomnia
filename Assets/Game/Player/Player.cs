@@ -84,17 +84,32 @@ public class Player: MonoBehaviour {
     }
 
     public void StandUp(bool isAnimated = true) {
-        StartCoroutine(StandUpAsync(isAnimated));
+        if (isAnimated) {
+            StartCoroutine(StandUpAsync());
+        } else {
+            fFixedBody.Remove();
+            DidStandUp();
+        }
     }
 
-    private IEnumerator StandUpAsync(bool isAnimated) {
+    private IEnumerator StandUpAsync() {
         // disable mouse look
         foreach (var mouse in mControls) {
             mouse.enabled = false;
         }
 
         // recenter camera over a few frames
-        const int frames = 5;
+        yield return RecenterCamera(frames: 5);
+
+        // prepare scene for animation
+        fFixedBody.Remove();
+        fBody.SetActive(true);
+
+        // play the animation
+        mAnimator.Play(kStandUpAnim);
+    }
+
+    private IEnumerator RecenterCamera(int frames) {
         var rotations = mControls
             .Select((look) => look.AnimationTo(Quaternion.identity))
             .ToArray();
@@ -105,18 +120,6 @@ public class Player: MonoBehaviour {
             foreach (var rotate in rotations) {
                 rotate(percent);
             }
-        }
-
-        // prepare scene for animation
-        fFixedBody.Remove();
-
-        // play the animation
-        fBody.SetActive(true);
-
-        if (isAnimated) {
-            mAnimator.Play(kStandUpAnim);
-        } else {
-            DidStandUp();
         }
     }
 
