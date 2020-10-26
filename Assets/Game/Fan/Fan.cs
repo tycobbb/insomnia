@@ -30,7 +30,7 @@ public class Fan: MonoBehaviour, Interact.Target {
 
         // automatically trigger interaction after a few seconds
         yield return new WaitForSeconds(kAutoInteractDelay);
-        if (mHover.enabled) {
+        if (mHover.enabled && Game.Get().CanAdvancePast(kStep)) {
             mHover.InteractWith(this);
         }
     }

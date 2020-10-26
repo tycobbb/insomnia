@@ -207,6 +207,10 @@ public class Game: MonoBehaviour {
         return mStep;
     }
 
+    public bool CanAdvancePast(Step step) {
+        return mStep == step;
+    }
+
     public bool DidChangeToStep(Step step) {
         if (mNewStep == null) {
             return false;

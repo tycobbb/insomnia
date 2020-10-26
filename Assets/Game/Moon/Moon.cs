@@ -4,6 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(Animator))]
 public class Moon: MonoBehaviour, Interact.Target {
     // -- constants --
+    private const Game.Step kStep = Game.Step.Moon;
     private const float kEnableDelay = 3.5f;
     private const float kAutoInteractDelay = 5.0f;
     private const string kShowMoonAnim = "ShowMoon";
@@ -24,7 +25,7 @@ public class Moon: MonoBehaviour, Interact.Target {
     }
 
     protected void Update() {
-        if (Game.Get().DidChangeToStep(Game.Step.Moon)) {
+        if (Game.Get().DidChangeToStep(kStep)) {
             Enable();
         }
     }
@@ -44,7 +45,7 @@ public class Moon: MonoBehaviour, Interact.Target {
 
         // auto-interact after a few seconds
         yield return new WaitForSeconds(kAutoInteractDelay);
-        if (mHover.enabled) {
+        if (mHover.enabled && Game.Get().CanAdvancePast(kStep)) {
             mHover.InteractWith(this);
         }
     }
