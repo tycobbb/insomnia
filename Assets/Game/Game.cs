@@ -78,7 +78,7 @@ public class Game: MonoBehaviour {
         IdentifyFan(GetComponentInChildren<Fan>());
         PickUp(GetComponentInChildren<Phone>());
         StandUp(GetComponentInChildren<Body>());
-        OpenDoor(GetComponentInChildren<Door>());
+        ExitBedroom(GetComponentInChildren<BedroomExit>());
 
         var room = GetComponentInChildren<Field>();
         DidStartEnterRoom(room);
@@ -89,7 +89,7 @@ public class Game: MonoBehaviour {
         yield return 0;
         // StandUp(GetComponentInChildren<Body>());
         // IdentifyMoon(GetComponentInChildren<Moon>(true));
-        // OpenDoor(GetComponentInChildren<Door>());
+        // ExitBedroom(GetComponentInChildren<Door>());
 
         fIsDebug = false;
     }
@@ -121,9 +121,9 @@ public class Game: MonoBehaviour {
         AdvanceStep();
     }
 
-    private void OpenDoor(Door door) {
+    private void ExitBedroom(BedroomExit exit) {
         if (!fIsDebug) {
-            door.Open();
+            exit.Open();
         }
 
         AdvanceStep();
@@ -157,7 +157,7 @@ public class Game: MonoBehaviour {
         AdvanceStep();
     }
 
-    private void ExitKitchen() {
+    public void ExitKitchen() {
         EnterBedroom((b) => b.ConnectToHall());
         AdvanceStep();
         fPlayer.SetPhoneTime("3:47 AM");
@@ -219,16 +219,14 @@ public class Game: MonoBehaviour {
                 PickUp(phone); break;
             case Body body:
                 StandUp(body); break;
-            case Door door:
-                OpenDoor(door); break;
+            case BedroomExit exit:
+                ExitBedroom(exit); break;
             case Sheep sheep:
                 CatchSheep(sheep); break;
             case Moon moon:
                 IdentifyMoon(moon); break;
             case Food food:
                 EatFood(food); break;
-            case ExitKitchen _:
-                ExitKitchen(); break;
             default:
                 Log.Error("Game - Interact w/ Unknown Target: {0}", target); break;
         }

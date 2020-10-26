@@ -50,7 +50,7 @@ public class Body: MonoBehaviour, Interact.Target {
 
     // -- queries --
     private static string GetRandomWiggleAnim() {
-        switch (Random.Range(0, 6)) {
+        switch (Random.Range(0, 5)) {
             case 0:
                 return kWiggleLeftAnim;
             case 1:
