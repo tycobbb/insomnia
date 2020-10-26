@@ -84,10 +84,10 @@ public class Game: MonoBehaviour {
         ExitSheepRoom();
 
         yield return 0;
-        // StandUp(GetComponentInChildren<Body>());
-        // Open(GetComponentInChildren<Door>());
-
         fIsDebug = false;
+        StandUp(GetComponentInChildren<Body>());
+        IdentifyMoon(GetComponentInChildren<Moon>());
+        OpenDoor(GetComponentInChildren<Door>());
     }
 
     // -- commands --

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 public class Inventory: MonoBehaviour {
     // -- constants --
@@ -9,23 +10,27 @@ public class Inventory: MonoBehaviour {
     // -- fields --
     [SerializeField]
     [Tooltip("The player's phone")]
-    private GameObject fInventoryPhone = null;
+    private GameObject fPhone = null;
 
     [SerializeField]
     [Tooltip("The player's sheep")]
-    private GameObject fInventorySheep = null;
+    private GameObject fSheep = null;
 
     [SerializeField]
     [Tooltip("The player's food")]
-    private GameObject fInventoryFood = null;
+    private GameObject fFood = null;
 
     [SerializeField]
-    [Tooltip("The position of the player's food item")]
-    private Transform fFoodPos = null;
-
-    [SerializeField]
-    [Tooltip("The player's phone's time.")]
+    [Tooltip("The player's phone's screen.")]
     private PhoneScreen fPhoneScreen = null;
+
+    // -- props --
+    private Animator mAnimator;
+
+    // -- lifecycle --
+    protected void Start() {
+        mAnimator = GetComponent<Animator>();
+    }
 
     // -- commands --
     public void SetPhoneTime(string time) {
@@ -33,33 +38,28 @@ public class Inventory: MonoBehaviour {
     }
 
     public void PickUpPhone() {
-        fInventoryPhone.SetActive(true);
-        Animator().Play(kShowPhoneAnim);
+        fPhone.SetActive(true);
+        mAnimator.Play(kShowPhoneAnim);
     }
 
     public void PickUpSheep() {
-        fInventorySheep.SetActive(true);
-        Animator().Play(kShowSheepAnim);
+        fSheep.SetActive(true);
+        mAnimator.Play(kShowSheepAnim);
     }
 
     public void PickUpFood(GameObject item) {
-        fInventoryFood.SetActive(true);
+        fFood.SetActive(true);
 
         // nest food in the inventory slot
-        var t = item.transform;
-        t.parent = fInventoryFood.transform;
+        var tf = fFood.transform;
+        var ti = item.transform;
+        ti.parent = tf;
 
         // move it to the pre-baked position
-        var p = fFoodPos;
-        t.position = p.position;
-        t.rotation = p.rotation;
-        t.localScale *= 0.5f;
+        ti.localPosition = Vector3.zero;
+        ti.forward = tf.forward;
+        ti.localScale *= 0.5f;
 
-        Animator().Play(kShowFoodAnim);
-    }
-
-    // -- dependencies --
-    private Animator Animator() {
-        return GetComponentInChildren<Animator>();
+        mAnimator.Play(kShowFoodAnim);
     }
 }
