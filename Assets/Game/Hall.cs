@@ -1,19 +1,26 @@
 ﻿using UnityEngine;
 
-public class Hall: MonoBehaviour {
+public class Hall : MonoBehaviour, Room {
     // -- fields --
-    [SerializeField]
-    [Tooltip("The wall between the hall and bedroom.")]
+    [SerializeField] [Tooltip("The room's entrance door.")]
+    private GameObject fDoor = null;
+
+    [SerializeField] [Tooltip("The wall between the room and bedroom.")]
     private GameObject fDoorWall = null;
 
-    // -- commands --
-    private void Enter() {
+    // -- Room --
+    // -- Room/commands
+    public void Enter() {
         fDoorWall.SetActive(true);
-        Game.Get().EnterHall();
     }
 
-    // -- events --
-    protected void OnTriggerEnter(Collider _) {
-        Enter();
+    public void SetActive(bool isActive) {
+        gameObject.SetActive(isActive);
+    }
+
+    // -- Room/queries
+    public GameObject Door() {
+        return fDoor;
     }
 }
+

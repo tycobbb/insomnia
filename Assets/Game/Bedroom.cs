@@ -7,16 +7,19 @@ public class Bedroom: MonoBehaviour {
     private Door fDoor = null;
 
     [SerializeField]
-    [Tooltip("The entrance door to the sheep room.")]
-    private GameObject fSheepDoor = null;
+    [Tooltip("The sheep room.")]
+    private SheepRoom fSheepRoom = null;
 
     [SerializeField]
-    [Tooltip("The entrance door to the kitchen.")]
-    private GameObject fKitchenDoor = null;
+    [Tooltip("The kitchen.")]
+    private Kitchen fKitchen = null;
 
     [SerializeField]
-    [Tooltip("The entrance door to the hall.")]
-    private GameObject fHallDoor = null;
+    [Tooltip("The hall.")]
+    private Hall fHall = null;
+
+    // -- props --
+    private Room mConnected;
 
     // -- lifecycle --
     // protected void Start() {
@@ -40,22 +43,34 @@ public class Bedroom: MonoBehaviour {
         gameObject.SetActive(true);
     }
 
-    public void WarpToSheep() {
-        WarpToDoor(fSheepDoor);
+    public void ConnectToSheep() {
+        ConnectToRoom(fSheepRoom);
     }
 
-    public void WarpToFood() {
-        WarpToDoor(fKitchenDoor);
+    public void ConnectToKitchen() {
+        ConnectToRoom(fKitchen);
     }
 
-    public void WarpToHall() {
-        WarpToDoor(fHallDoor);
+    public void ConnectToHall() {
+        ConnectToRoom(fHall);
     }
 
-    private void WarpToDoor(GameObject door) {
-        // calculate position based on the new door's position
+    private void ConnectToRoom(Room room) {
+        // hide the old room
+        if (mConnected != null) {
+            mConnected.SetActive(false);
+        }
+
+        // and show the new one
+        mConnected = room;
+        mConnected.SetActive(true);
+
+        // align bedroom to the connected room's door
+        var door = mConnected.Door();
+
+        // given the new door's world position
         var position = door.transform.position;
-        // offset by the bedroom door's local position
+        // offset by the bedroom door's local position (our pivots are really bad)
         position -= fDoor.transform.localPosition;
         // and center the door
         position -= new Vector3(0.5f, 0.0f, 0.0f);

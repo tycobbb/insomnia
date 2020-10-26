@@ -79,7 +79,7 @@ public class Game: MonoBehaviour {
         PickUp(GetComponentInChildren<Phone>());
         StandUp(GetComponentInChildren<Body>());
         OpenDoor(GetComponentInChildren<Door>());
-        EnterSheepRoom();
+        EnterSheepRoom(GetComponentInChildren<SheepRoom>());
         CatchSheep(GetComponentInChildren<Sheep>());
         ExitSheepRoom();
 
@@ -93,7 +93,7 @@ public class Game: MonoBehaviour {
     // -- commands --
     public void Reset() {
         AdvanceToStep(Step.Fan);
-        EnterBedroom((b) => b.WarpToSheep());
+        EnterBedroom((b) => b.ConnectToSheep());
         fPlayer.SetPhoneTime("1:15 AM");
     }
 
@@ -128,12 +128,13 @@ public class Game: MonoBehaviour {
         AdvanceStep();
     }
 
-    public void EnterSheepRoom() {
+    public void EnterSheepRoom(SheepRoom room) {
+        room.Enter();
         fBedroom.Hide();
     }
 
     public void ExitSheepRoom() {
-        EnterBedroom((b) => b.WarpToFood());
+        EnterBedroom((b) => b.ConnectToKitchen());
         AdvanceStep();
         fPlayer.SetPhoneTime("2:33 AM");
     }
@@ -147,7 +148,8 @@ public class Game: MonoBehaviour {
         AdvanceStep();
     }
 
-    public void EnterKitchen() {
+    public void EnterKitchen(Kitchen room) {
+        room.Enter();
         fBedroom.Hide();
     }
 
@@ -157,12 +159,13 @@ public class Game: MonoBehaviour {
     }
 
     private void ExitKitchen() {
-        EnterBedroom((b) => b.WarpToHall());
+        EnterBedroom((b) => b.ConnectToHall());
         AdvanceStep();
         fPlayer.SetPhoneTime("3:47 AM");
     }
 
-    public void EnterHall() {
+    public void EnterHall(Hall room) {
+        room.Enter();
         fBedroom.Hide();
     }
 
@@ -204,6 +207,17 @@ public class Game: MonoBehaviour {
     }
 
     // -- events --
+    public void DidEnter(Room target) {
+        switch (target) {
+            case SheepRoom room:
+                EnterSheepRoom(room); break;
+            case Kitchen room:
+                EnterKitchen(room); break;
+            case Hall room:
+                EnterHall(room); break;
+        }
+    }
+
     public void DidInteract(Interact.Target target) {
         switch (target) {
             case Fan fan:
