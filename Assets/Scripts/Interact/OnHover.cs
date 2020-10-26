@@ -32,13 +32,17 @@ namespace Interact {
         private float fMinDistance = 20.0f;
 
         // -- props --
-        private Target mTarget;
+        private Camera mCamera;
         private GameObject mHovered = null;
         private GameObject mSelected = null;
         private int mWaitFrame = 0;
         private IEnumerator mTransition;
 
         // -- lifecycle --
+        protected void Awake() {
+            mCamera = Camera.main;
+        }
+
         protected void Start() {
             // warn on configuration errors
             switch (fMode) {
@@ -47,9 +51,6 @@ namespace Interact {
                 case Mode.Dynamic when GetComponentInChildren<Collider>() == null:
                     Debug.LogWarningFormat("OnHover requires at least one child collider."); break;
             }
-
-            // store target
-            mTarget = GetComponentInParent<Target>();
 
             // configure prompt
             if (HasPrompt()) {
@@ -77,7 +78,7 @@ namespace Interact {
             // if this item has a prompt and something is selected
             if (HasPrompt() && mSelected != null) {
                 // re-orient the prompt towards the camera
-                fPrompt.transform.forward = MainCamera().transform.forward;
+                fPrompt.transform.forward = mCamera.transform.forward;
 
                 // interact on click
                 if (Input.GetMouseButtonDown(0)) {
@@ -116,9 +117,12 @@ namespace Interact {
 
         private void Interact() {
             Log.Debug("OnHover - Interact: {0}", mSelected);
+            InteractWith(GetComponentInParent<Target>());
+        }
 
+        public void InteractWith(Interact.Target target) {
             // send an event to the game
-            Game.Get().DidInteract(mTarget);
+            Game.Get().DidInteract(target);
 
             // and disable this component
             Select(null);
@@ -152,8 +156,7 @@ namespace Interact {
 
         // -- queries --
         private GameObject GetHoveredObject() {
-            var camera = MainCamera();
-            var screen = camera.WorldToScreenPoint(transform.position);
+            var screen = mCamera.WorldToScreenPoint(transform.position);
 
             // check if we're behind the camera
             if (screen.z < 0) {
@@ -166,7 +169,7 @@ namespace Interact {
             }
 
             // check if a spherecast hits this object
-            var t = camera.transform;
+            var t = mCamera.transform;
             var hits = Physics.SphereCastAll(
                 t.position,
                 fRadius,
@@ -266,11 +269,6 @@ namespace Interact {
 
         private bool HasPrompt() {
             return fPrompt != null;
-        }
-
-        // -- accessors --
-        private Camera MainCamera() {
-            return Camera.main;
         }
     }
 }
