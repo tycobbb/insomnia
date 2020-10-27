@@ -123,17 +123,17 @@ public class Game: MonoBehaviour {
     }
 
     private void IdentifyFan(Fan _) {
-        AdvanceStep();
+        AdvancePast(Step.Fan);
     }
 
     private void PickUp(Phone phone) {
         fPlayer.PickUp(phone);
-        AdvanceStep();
+        AdvancePast(Step.Phone);
     }
 
     private void StandUp(Body _) {
         fPlayer.StandUp(isAnimated: !fIsDebug);
-        AdvanceStep();
+        AdvancePast(mStep);
     }
 
     private void ExitBedroom(BedroomExit exit) {
@@ -146,7 +146,7 @@ public class Game: MonoBehaviour {
             exit.Open();
         }
 
-        AdvanceStep();
+        AdvancePast(mStep);
     }
 
     private void EnterField(Field room) {
@@ -157,17 +157,17 @@ public class Game: MonoBehaviour {
         fEye.Open();
         fPlayer.RecenterView();
         EnterBedroom((b) => b.ConnectToKitchen());
-        AdvanceStep();
+        AdvancePast(Step.Exit1);
         fPlayer.SetPhoneTime("2:33 AM");
     }
 
     private void CatchSheep(Sheep sheep) {
         fPlayer.PickUp(sheep);
-        AdvanceStep();
+        AdvancePast(Step.Sheep);
     }
 
     private void IdentifyMoon(Moon _) {
-        AdvanceStep();
+        AdvancePast(Step.Moon);
     }
 
     private void EnterKitchen(Kitchen room) {
@@ -176,13 +176,13 @@ public class Game: MonoBehaviour {
 
     private void EatFood(Food food) {
         fPlayer.PickUp(food);
-        AdvanceStep();
+        AdvancePast(Step.Food);
     }
 
     public void ExitKitchen() {
         fEye.Open();
         EnterBedroom((b) => b.ConnectToHall());
-        AdvanceStep();
+        AdvancePast(Step.Exit2);
         fPlayer.SetPhoneTime("3:47 AM");
     }
 
@@ -194,8 +194,9 @@ public class Game: MonoBehaviour {
         fEye.Open(isWhite: true);
         fPlayer.RecenterView();
         fPlayer.ClearInventory();
+
         EnterBedroom((b) => b.SetDaytime());
-        AdvanceStep();
+        AdvancePast(Step.Exit3);
         fPlayer.SetPhoneTime("6:15 AM");
     }
 
@@ -214,11 +215,15 @@ public class Game: MonoBehaviour {
     }
 
     // -- commands/step
-    private void AdvanceStep() {
-        AdvanceToStep((Step)((ushort)mStep << 1));
+    private void AdvancePast(Step step) {
+        AdvanceToStep((Step)((ushort)step << 1));
     }
 
     private void AdvanceToStep(Step step) {
+        if (step == mStep) {
+            return;
+        }
+
         Log.Debug("Game - AdvanceToStep: {0}", step);
 
         mStep = step;
