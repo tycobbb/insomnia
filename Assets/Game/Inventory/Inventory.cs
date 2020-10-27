@@ -26,6 +26,7 @@ public class Inventory: MonoBehaviour {
 
     // -- props --
     private Animator mAnimator;
+    private int mFoodEaten = 0;
 
     // -- lifecycle --
     protected void Start() {
@@ -47,23 +48,51 @@ public class Inventory: MonoBehaviour {
         mAnimator.Play(kShowSheepAnim);
     }
 
-    public void PickUpFood(GameObject item) {
+    public void PickUpFood(Food food) {
         fFood.SetActive(true);
 
         // nest food in the inventory slot
         var tf = fFood.transform;
-        var ti = item.transform;
+        var ti = food.Selected().transform;
         ti.parent = tf;
 
-        // move it to the pre-baked position
-        ti.localPosition = Vector3.zero;
-        ti.up = tf.forward;
+        // i: 0  1  2  3  4 ...
+        // o: 0  1 -1  2 -2 ...
+        // move it to the pre-baked position (oscillate around center)
+        var i = mFoodEaten;
+        var o = (i + 1) / 2 * (int)((i % 2 - 0.5f) * 2);
+        ti.localPosition = new Vector3(Mathf.Clamp(o, -4, 4) * 0.04f, 0.0f);
         ti.localScale *= 0.33f;
 
-        mAnimator.Play(kShowFoodAnim);
+        if (food.IsFacingUp()) {
+            ti.up = tf.forward;
+        } else {
+            ti.forward = tf.forward;
+        }
+
+
+        if (mFoodEaten == 0) {
+            mAnimator.Play(kShowFoodAnim);
+        }
+
+        mFoodEaten++;
+    }
+
+    public void TrimFood() {
+        var tf = fFood.transform;
+
+        // remove all but the first five food items
+        for (var i = tf.childCount - 1; i > 4; i--) {
+            Destroy(tf.GetChild(i).gameObject);
+        }
     }
 
     public void Clear() {
         gameObject.SetActive(false);
+    }
+
+    // -- queries --
+    public int FoodEaten() {
+        return mFoodEaten;
     }
 }

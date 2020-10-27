@@ -16,7 +16,7 @@ namespace Interact {
 
         // -- fields --
         [SerializeField]
-        [Tooltip("The prompt to show on hover")]
+        [Tooltip("The prompt to show on hover. The first child if not set")]
         private GameObject fPrompt = null;
 
         [SerializeField]
@@ -41,6 +41,10 @@ namespace Interact {
         // -- lifecycle --
         protected void Awake() {
             mCamera = Camera.main;
+
+            if (fPrompt == null) {
+                fPrompt = transform.GetChild(0).gameObject;
+            }
         }
 
         protected void Start() {
@@ -176,13 +180,6 @@ namespace Interact {
                 t.forward,
                 fMinDistance
             );
-
-            // Debug.DrawRay(
-            //     t.position,
-            //     t.forward * fMinDistance,
-            //     Color.green,
-            //     0.5f
-            // );
 
             if (fMode == Mode.Fixed) {
                 foreach (var hit in hits) {

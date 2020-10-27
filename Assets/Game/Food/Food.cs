@@ -2,8 +2,14 @@
 using UnityEngine;
 
 public class Food: MonoBehaviour, Interact.Target {
-    // -- constants --
-    private const Game.Step kStep = Game.Step.Food;
+    // -- fields --
+    [SerializeField]
+    [Tooltip("The food game step.")]
+    private Game.Step fStep = Game.Step.Food2;
+
+    [SerializeField]
+    [Tooltip("If the food should face up top-forward when eaten")]
+    private bool fIsFacingUp = false;
 
     // -- props --
     private Interact.OnHover mHover;
@@ -14,7 +20,7 @@ public class Food: MonoBehaviour, Interact.Target {
     }
 
     protected void Update() {
-        if (Game.Get().DidChangeToStep(kStep)) {
+        if (Game.Get().DidChangeToStep(fStep)) {
             Enable();
         }
     }
@@ -33,6 +39,10 @@ public class Food: MonoBehaviour, Interact.Target {
     }
 
     // -- queries --
+    public bool IsFacingUp() {
+        return fIsFacingUp;
+    }
+
     public GameObject Selected() {
         var selected = mHover.Selected();
         if (selected != null) {

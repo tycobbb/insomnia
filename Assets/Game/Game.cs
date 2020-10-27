@@ -17,13 +17,14 @@ public class Game: MonoBehaviour {
         Foot2 = 1 << 6,
         Moon = 1 << 7,
         Door2 = 1 << 8,
-        Food = 1 << 9,
-        Exit2 = 1 << 10,
-        Foot3 = 1 << 11,
-        Door3 = 1 << 12,
-        Exit3 = 1 << 13,
-        Foot4 = 1 << 14,
-        Door4 = 1 << 15,
+        Food1 = 1 << 9,
+        Food2 = 1 << 10,
+        Exit2 = 1 << 11,
+        Foot3 = 1 << 12,
+        Door3 = 1 << 13,
+        Exit3 = 1 << 14,
+        Foot4 = 1 << 15,
+        Door4 = 1 << 16,
     }
 
     // -- fields --
@@ -176,11 +177,17 @@ public class Game: MonoBehaviour {
 
     private void EatFood(Food food) {
         fPlayer.PickUp(food);
-        AdvancePast(Step.Food);
+
+        if (mStep == Step.Food1) {
+            AdvancePast(Step.Food1);
+        } else if (fPlayer.FoodEaten() >= 3) {
+            AdvancePast(Step.Food2);
+        }
     }
 
     public void ExitKitchen() {
         fEye.Open();
+        fPlayer.TrimFood();
         EnterBedroom((b) => b.ConnectToHall());
         AdvancePast(Step.Exit2);
         fPlayer.SetPhoneTime("3:47 AM");

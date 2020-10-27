@@ -82,7 +82,7 @@ public class Player: MonoBehaviour {
 
     public void PickUp(Food food) {
         // move in-world food into inventory
-        fInventory.PickUpFood(food.Selected());
+        fInventory.PickUpFood(food);
 
         // hide in-world food
         food.Remove();
@@ -134,6 +134,10 @@ public class Player: MonoBehaviour {
         SetCameraLock(false);
     }
 
+    public void TrimFood() {
+        fInventory.TrimFood();
+    }
+
     public void ClearInventory() {
         fInventory.Clear();
     }
@@ -163,5 +167,10 @@ public class Player: MonoBehaviour {
         c.enabled = false;
         c.transform.position = position;
         c.enabled = !fIsLocked;
+    }
+
+    // -- queries --
+    public int FoodEaten() {
+        return fInventory.FoodEaten();
     }
 }
