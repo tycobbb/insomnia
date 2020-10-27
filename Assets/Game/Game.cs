@@ -45,6 +45,10 @@ public class Game: MonoBehaviour {
     [Tooltip("The bedroom.")]
     private Bedroom fBedroom = null;
 
+    [SerializeField]
+    [Tooltip("The eye transition.")]
+    private Eye fEye = null;
+
     // -- props --
     private Step mStep;
     private Step? mNewStep;
@@ -74,11 +78,13 @@ public class Game: MonoBehaviour {
 
     private IEnumerator DebugAsync() {
         yield return 0;
+
         IdentifyFan(GetComponentInChildren<Fan>());
         PickUp(GetComponentInChildren<Phone>());
         StandUp(GetComponentInChildren<Body>());
-        // ExitBedroom(GetComponentInChildren<BedroomExit>());
-
+        fIsDebug = false;
+        ExitBedroom(GetComponentInChildren<BedroomExit>());
+        //
         // var r1 = GetComponentInChildren<Field>();
         // DidStartEnterRoom(r1);
         // DidFinishEnterRoom(r1);
@@ -139,6 +145,8 @@ public class Game: MonoBehaviour {
     }
 
     public void ExitField() {
+        fEye.Open();
+        fPlayer.RecenterView();
         EnterBedroom((b) => b.ConnectToKitchen());
         AdvanceStep();
         fPlayer.SetPhoneTime("2:33 AM");
@@ -163,6 +171,7 @@ public class Game: MonoBehaviour {
     }
 
     public void ExitKitchen() {
+        fEye.Open();
         EnterBedroom((b) => b.ConnectToHall());
         AdvanceStep();
         fPlayer.SetPhoneTime("3:47 AM");

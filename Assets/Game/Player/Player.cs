@@ -53,6 +53,13 @@ public class Player: MonoBehaviour {
         fFixedBody.Show();
     }
 
+    public void RecenterView() {
+        foreach (var mouse in mControls) {
+            mouse.transform.rotation = Quaternion.identity;
+            mouse.Reset();
+        }
+    }
+
     public void SetPhoneTime(string time) {
         fInventory.SetPhoneTime(time);
     }
@@ -93,12 +100,8 @@ public class Player: MonoBehaviour {
     }
 
     private IEnumerator StandUpAsync() {
-        // disable mouse look
-        foreach (var mouse in mControls) {
-            mouse.enabled = false;
-        }
-
         // recenter camera over a few frames
+        SetCameraLock(true);
         yield return RecenterCamera(frames: 5);
 
         // prepare scene for animation
@@ -115,7 +118,7 @@ public class Player: MonoBehaviour {
             .ToArray();
 
         for (var i = 0; i < frames; i++) {
-            var percent = (float) i / frames;
+            var percent = (float)(i + 1) / frames;
             yield return 0;
             foreach (var rotate in rotations) {
                 rotate(percent);
@@ -130,12 +133,7 @@ public class Player: MonoBehaviour {
         // unlock player and assign final position
         SetLock(false);
         Warp(transform.position);
-
-        // re-enable mouse look
-        foreach (var mouse in mControls) {
-            mouse.Reset();
-            mouse.enabled = true;
-        }
+        SetCameraLock(false);
     }
 
     private void SetLock(bool isLocked) {
@@ -144,6 +142,16 @@ public class Player: MonoBehaviour {
         fIsLocked = isLocked;
         mCharacter.enabled = !isLocked;
         mHeadBob.enabled = !isLocked;
+    }
+
+    private void SetCameraLock(bool isLocked) {
+        foreach (var mouse in mControls) {
+            if (!isLocked) {
+                mouse.Reset();
+            }
+
+            mouse.enabled = !isLocked;
+        }
     }
 
     private void Warp(Vector3 position) {
