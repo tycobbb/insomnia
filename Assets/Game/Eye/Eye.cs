@@ -10,15 +10,15 @@ public class Eye: MonoBehaviour {
     // -- fields --
     [SerializeField]
     [Tooltip("The overlay container.")]
-    private GameObject tOverlay;
+    private GameObject tOverlay = null;
 
     [SerializeField]
     [Tooltip("The overlay container.")]
-    private GameObject tBlack;
+    private GameObject tBlack = null;
 
     [SerializeField]
     [Tooltip("The overlay container.")]
-    private GameObject tWhite;
+    private GameObject tWhite = null;
 
     // -- fields --
     private Animator mAnimator;
