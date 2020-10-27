@@ -17,41 +17,45 @@ public class AmbientSound: MonoBehaviour {
     private AudioSource fAudioSource = null;
 
     // -- props --
-    private Coroutine mActiveSound = null;
+    private AudioClip[] mSounds = null;
+    private Coroutine mActive = null;
 
     // -- lifecycle --
-    protected void Start() {
+    protected void Awake() {
         if (fAudioSource == null) {
             fAudioSource = GetComponent<AudioSource>();
         }
     }
 
     // -- commands --
-    public void Play(AudioClip clip = null) {
+    public void Play(AudioClip[] sounds = null) {
         Stop();
-
-        // play the specified clip, if passed
-        if (clip != null) {
-            fAudioSource.clip = clip;
-        }
-
-        mActiveSound = StartCoroutine(PlayAsync());
+        mSounds = sounds;
+        mActive = StartCoroutine(PlayAsync());
     }
 
     public void Stop() {
-        if (mActiveSound != null) {
-            StopCoroutine(mActiveSound);
+        if (mActive != null) {
+            StopCoroutine(mActive);
         }
 
-        mActiveSound = null;
+        mActive = null;
     }
 
     private IEnumerator PlayAsync() {
-        var duration = fAudioSource.clip.length;
-
         while (true) {
+            // assign a random sound if necessary
+            if (mSounds != null) {
+                fAudioSource.clip = mSounds[Random.Range(0, mSounds.Length)];
+            }
+
+            // play a sound
             fAudioSource.Play();
+
+            // wait a random amount of time to play the next clip
+            var duration = fAudioSource.clip.length;
             var delay = duration + Random.Range(fMinDelay, fMaxDelay);
+
             yield return new WaitForSeconds(delay);
         }
     }

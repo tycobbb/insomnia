@@ -8,8 +8,12 @@ public class BedroomExit: MonoBehaviour, Interact.Target {
 
     // -- fields --
     [SerializeField]
-    [Tooltip("The sheep sound.")]
-    private AudioClip fSheepSound = null;
+    [Tooltip("The sheep sounds.")]
+    private AudioClip[] fFieldSounds = null;
+
+    [SerializeField]
+    [Tooltip("The kitchen sounds.")]
+    private AudioClip[] fKitchenSounds = null;
 
     // -- props --
     private Door mDoor;
@@ -44,9 +48,9 @@ public class BedroomExit: MonoBehaviour, Interact.Target {
 
         switch (step) {
             case Game.Step.Door1:
-                mAmbientSound.Play(fSheepSound); break;
+                mAmbientSound.Play(fFieldSounds); break;
             case Game.Step.Door2:
-                break; // TODO: play a sound to cue the door to the kitchen
+                mAmbientSound.Play(fKitchenSounds); break;
             case Game.Step.Door3:
                 break; // TODO: play a sound to cue the door to the hall
         }
