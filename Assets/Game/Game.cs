@@ -22,6 +22,8 @@ public class Game: MonoBehaviour {
         Foot3 = 1 << 11,
         Door3 = 1 << 12,
         Exit3 = 1 << 13,
+        Foot4 = 1 << 14,
+        Door4 = 1 << 15,
     }
 
     // -- fields --
@@ -82,25 +84,27 @@ public class Game: MonoBehaviour {
         IdentifyFan(GetComponentInChildren<Fan>());
         PickUp(GetComponentInChildren<Phone>());
         StandUp(GetComponentInChildren<Body>());
-        fIsDebug = false;
         ExitBedroom(GetComponentInChildren<BedroomExit>());
-        //
-        // var r1 = GetComponentInChildren<Field>();
-        // DidStartEnterRoom(r1);
-        // DidFinishEnterRoom(r1);
-        // CatchSheep(GetComponentInChildren<Sheep>(true));
-        // ExitField();
-        //
-        // yield return 0;
-        // StandUp(GetComponentInChildren<Body>());
-        // IdentifyMoon(GetComponentInChildren<Moon>(true));
-        // ExitBedroom(GetComponentInChildren<BedroomExit>());
-        //
-        // var r2 = GetComponentInChildren<Kitchen>();
-        // DidStartEnterRoom(r2);
-        // DidFinishEnterRoom(r2);
-        // EatFood(GetComponentInChildren<Food>(true));
-        // ExitKitchen();
+
+        var r1 = GetComponentInChildren<Field>();
+        DidStartEnterRoom(r1);
+        DidFinishEnterRoom(r1);
+        CatchSheep(GetComponentInChildren<Sheep>(true));
+        ExitField();
+
+        yield return 0;
+        StandUp(GetComponentInChildren<Body>());
+        IdentifyMoon(GetComponentInChildren<Moon>(true));
+        ExitBedroom(GetComponentInChildren<BedroomExit>());
+
+        var r2 = GetComponentInChildren<Kitchen>();
+        DidStartEnterRoom(r2);
+        DidFinishEnterRoom(r2);
+        EatFood(GetComponentInChildren<Food>(true));
+        ExitKitchen();
+
+        yield return 0;
+        StandUp(GetComponentInChildren<Body>());
 
         fIsDebug = false;
     }
@@ -133,6 +137,11 @@ public class Game: MonoBehaviour {
     }
 
     private void ExitBedroom(BedroomExit exit) {
+        if (mStep == Step.Door4) {
+            Quit();
+            return;
+        }
+
         if (!fIsDebug) {
             exit.Open();
         }
@@ -181,6 +190,15 @@ public class Game: MonoBehaviour {
         StartEnterRoom(room);
     }
 
+    public void ExitHall() {
+        fEye.Open(isWhite: true);
+        fPlayer.RecenterView();
+        fPlayer.ClearInventory();
+        EnterBedroom((b) => b.SetDaytime());
+        AdvanceStep();
+        fPlayer.SetPhoneTime("6:15 AM");
+    }
+
     private void StartEnterRoom(Room room) {
         room.EnterStart();
         fBedroom.Hide();
@@ -189,6 +207,10 @@ public class Game: MonoBehaviour {
     private void FinishEnterRoom(Room room) {
         room.EnterEnd();
         fBedroom.HideVolume();
+    }
+
+    private void Quit() {
+        Application.Quit();
     }
 
     // -- commands/step

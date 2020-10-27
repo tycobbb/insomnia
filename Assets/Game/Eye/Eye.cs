@@ -8,20 +8,32 @@ public class Eye: MonoBehaviour {
     private const float kOpenDelay = 2.0f;
 
     // -- fields --
-    // [SerializeField]
-    // [Tooltip("The eye animator.")]
+    [SerializeField]
+    [Tooltip("The overlay container.")]
+    private GameObject tOverlay;
+
+    [SerializeField]
+    [Tooltip("The overlay container.")]
+    private GameObject tBlack;
+
+    [SerializeField]
+    [Tooltip("The overlay container.")]
+    private GameObject tWhite;
+
+    // -- fields --
     private Animator mAnimator;
-    private GameObject mOverlay;
+    private GameObject mColor;
 
     // -- lifecycle --
     private void Awake() {
         mAnimator = GetComponent<Animator>();
-        mOverlay = transform.GetChild(0).gameObject;
     }
 
     // -- commands --
-    public void Open() {
-        mOverlay.SetActive(true);
+    public void Open(bool isWhite = false) {
+        mColor = isWhite ? tWhite : tBlack;
+        tOverlay.SetActive(true);
+        mColor.SetActive(true);
         StartCoroutine(OpenAsync());
     }
 
@@ -32,6 +44,7 @@ public class Eye: MonoBehaviour {
 
     [UsedImplicitly] // AnimationEvent
     private void DidOpen() {
-        mOverlay.SetActive(false);
+        tOverlay.SetActive(false);
+        mColor.SetActive(false);
     }
 }

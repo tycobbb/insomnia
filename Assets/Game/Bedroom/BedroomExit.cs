@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class BedroomExit: MonoBehaviour, Interact.Target {
     // -- constants --
-    private const Game.Step kStep = Game.Step.Door1 | Game.Step.Door2 | Game.Step.Door3;
+    private const Game.Step kStep = Game.Step.Door1 | Game.Step.Door2 | Game.Step.Door3 | Game.Step.Door4;
     private const float kEnableDelay = 4.5f;
 
     // -- fields --
@@ -40,7 +40,7 @@ public class BedroomExit: MonoBehaviour, Interact.Target {
     }
 
     private IEnumerator EnableAsync(Game.Step step) {
-        if (step != Game.Step.Door2) {
+        if (step == Game.Step.Door1) {
             yield return new WaitForSeconds(kEnableDelay);
         }
 

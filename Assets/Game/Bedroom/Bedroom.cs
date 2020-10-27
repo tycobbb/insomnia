@@ -15,6 +15,10 @@ public class Bedroom: MonoBehaviour {
     [Tooltip("The hall.")]
     private Hall fHall = null;
 
+    [SerializeField]
+    [Tooltip("The hall.")]
+    private GameObject fNightSky = null;
+
     // -- props --
     private Room mConnected;
     private Door mDoor;
@@ -69,6 +73,12 @@ public class Bedroom: MonoBehaviour {
 
     public void ConnectToHall() {
         ConnectToRoom(fHall);
+    }
+
+    public void SetDaytime() {
+        ConnectToRoom(fField);
+        fNightSky.SetActive(false);
+        mVolume.SetActive(false);
     }
 
     private void ConnectToRoom(Room room) {

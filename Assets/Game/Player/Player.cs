@@ -136,6 +136,10 @@ public class Player: MonoBehaviour {
         SetCameraLock(false);
     }
 
+    public void ClearInventory() {
+        fInventory.Clear();
+    }
+
     private void SetLock(bool isLocked) {
         Log.Debug("Player - Lock: {0}", isLocked);
 

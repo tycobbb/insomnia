@@ -62,4 +62,8 @@ public class Inventory: MonoBehaviour {
 
         mAnimator.Play(kShowFoodAnim);
     }
+
+    public void Clear() {
+        gameObject.SetActive(false);
+    }
 }
