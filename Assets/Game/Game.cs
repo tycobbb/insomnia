@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Game: MonoBehaviour {
@@ -76,15 +75,27 @@ public class Game: MonoBehaviour {
         yield return 0;
         IdentifyFan(GetComponentInChildren<Fan>());
         PickUp(GetComponentInChildren<Phone>());
-        // StandUp(GetComponentInChildren<Body>());
-        // Open(GetComponentInChildren<Door>());
-        // EnterSheepRoom();
-        // Catch(GetComponentInChildren<Sheep>());
-        // ExitSheepRoom();
+        StandUp(GetComponentInChildren<Body>());
+        // ExitBedroom(GetComponentInChildren<BedroomExit>());
+
+        // var r1 = GetComponentInChildren<Field>();
+        // DidStartEnterRoom(r1);
+        // DidFinishEnterRoom(r1);
+        // CatchSheep(GetComponentInChildren<Sheep>(true));
+        // ExitField();
         //
         // yield return 0;
         // StandUp(GetComponentInChildren<Body>());
-        // Open(GetComponentInChildren<Door>());
+        // IdentifyMoon(GetComponentInChildren<Moon>(true));
+        // ExitBedroom(GetComponentInChildren<BedroomExit>());
+        //
+        // var r2 = GetComponentInChildren<Kitchen>();
+        // DidStartEnterRoom(r2);
+        // DidFinishEnterRoom(r2);
+        // EatFood(GetComponentInChildren<Food>(true));
+        // ExitKitchen();
+
+        fIsDebug = false;
     }
 
     // -- commands --
@@ -114,8 +125,11 @@ public class Game: MonoBehaviour {
         AdvanceStep();
     }
 
-    private void OpenDoor(Door door) {
-        door.Open();
+    private void ExitBedroom(BedroomExit exit) {
+        if (!fIsDebug) {
+            exit.Open();
+        }
+
         AdvanceStep();
     }
 
@@ -143,8 +157,8 @@ public class Game: MonoBehaviour {
         AdvanceStep();
     }
 
-    private void ExitKitchen() {
-        EnterBedroom((b) => b.WarpToHall());
+    public void ExitKitchen() {
+        EnterBedroom((b) => b.ConnectToHall());
         AdvanceStep();
         fPlayer.SetPhoneTime("3:47 AM");
     }
@@ -182,6 +196,10 @@ public class Game: MonoBehaviour {
         return mStep;
     }
 
+    public bool CanAdvancePast(Step step) {
+        return mStep == step;
+    }
+
     public bool DidChangeToStep(Step step) {
         if (mNewStep == null) {
             return false;
@@ -199,14 +217,12 @@ public class Game: MonoBehaviour {
                 PickUp(phone); break;
             case Body body:
                 StandUp(body); break;
-            case Door door:
-                OpenDoor(door); break;
+            case BedroomExit exit:
+                ExitBedroom(exit); break;
             case Sheep sheep:
                 CatchSheep(sheep); break;
             case Food food:
                 EatFood(food); break;
-            case ExitKitchen _:
-                ExitKitchen(); break;
             default:
                 Log.Error("Game - Interact w/ Unknown Target: {0}", target); break;
         }

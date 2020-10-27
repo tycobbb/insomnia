@@ -1,23 +1,24 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 
 public class Phone: MonoBehaviour, Interact.Target {
     // -- constants --
+    private const Game.Step kStep = Game.Step.Phone;
     private const float kEnableDelay = 2.0f;
 
-    // -- fields --
-    [SerializeField]
-    [Tooltip("The phone's screen.")]
-    private PhoneScreen fScreen = null;
-
-    [SerializeField]
-    [Tooltip("The notification sound.")]
-    private AudioSource fNotification = null;
+    // -- props --
+    private PhoneScreen mScreen;
+    private Interact.OnHover mHover;
 
     // -- lifecycle --
+    protected void Awake() {
+        mScreen = GetComponentInChildren<PhoneScreen>();
+        mHover = GetComponent<Interact.OnHover>();
+    }
+
     protected void Update() {
-        // enable hover on phone step
-        if (Game.Get().DidChangeToStep(Game.Step.Phone)) {
+        if (Game.Get().DidChangeToStep(kStep)) {
             Enable();
         }
     }
@@ -30,9 +31,8 @@ public class Phone: MonoBehaviour, Interact.Target {
     private IEnumerator EnableAsync() {
         yield return new WaitForSeconds(kEnableDelay);
 
-        Hover().Reset();
-        fScreen.TurnOn();
-        fNotification.Play();
+        mHover.Reset();
+        mScreen.TurnOn();
     }
 
     public void Remove() {
@@ -40,12 +40,7 @@ public class Phone: MonoBehaviour, Interact.Target {
     }
 
     private IEnumerator RemoveAsync() {
-        yield return Hover().Transition();
+        yield return mHover.Transition();
         gameObject.SetActive(false);
-    }
-
-    // -- Interact.Target --
-    public Interact.OnHover Hover() {
-        return GetComponent<Interact.OnHover>();
     }
 }
