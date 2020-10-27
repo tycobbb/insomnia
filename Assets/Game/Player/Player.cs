@@ -66,7 +66,6 @@ public class Player: MonoBehaviour {
 
     public void PickUp(Phone phone) {
         // hide the in-world phone
-        // TODO: play "pickup" sound
         phone.Remove();
 
         // and move it to the inventory
@@ -83,7 +82,6 @@ public class Player: MonoBehaviour {
 
     public void PickUp(Food food) {
         // move in-world food into inventory
-        // TODO: play "pickup" sound
         fInventory.PickUpFood(food.Selected());
 
         // hide in-world food

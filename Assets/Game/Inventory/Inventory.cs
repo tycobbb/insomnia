@@ -57,8 +57,8 @@ public class Inventory: MonoBehaviour {
 
         // move it to the pre-baked position
         ti.localPosition = Vector3.zero;
-        ti.forward = tf.forward;
-        ti.localScale *= 0.5f;
+        ti.up = tf.forward;
+        ti.localScale *= 0.33f;
 
         mAnimator.Play(kShowFoodAnim);
     }
