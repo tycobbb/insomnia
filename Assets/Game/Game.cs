@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Game: MonoBehaviour {
@@ -8,7 +7,7 @@ public class Game: MonoBehaviour {
 
     // -- types --
     [Flags]
-    public enum Step: ushort {
+    public enum Step: uint {
         Fan = 1 << 0,
         Phone = 1 << 1,
         Foot1 = 1 << 2,
@@ -16,12 +15,13 @@ public class Game: MonoBehaviour {
         Sheep = 1 << 4,
         Exit1 = 1 << 5,
         Foot2 = 1 << 6,
-        Door2 = 1 << 7,
-        Food = 1 << 8,
-        Exit2 = 1 << 9,
-        Foot3 = 1 << 10,
-        Door3 = 1 << 11,
-        Exit3 = 1 << 12,
+        Moon = 1 << 7,
+        Door2 = 1 << 8,
+        Food = 1 << 9,
+        Exit2 = 1 << 10,
+        Foot3 = 1 << 11,
+        Door3 = 1 << 12,
+        Exit3 = 1 << 13,
     }
 
     // -- fields --
@@ -30,7 +30,7 @@ public class Game: MonoBehaviour {
     private bool fIsFree = false;
 
     [SerializeField]
-    [Tooltip("Whether the game is in debug mode.")]
+    [Tooltip("Whether the game is executing debug steps.")]
     private bool fIsDebug = false;
 
     [SerializeField]
@@ -44,6 +44,10 @@ public class Game: MonoBehaviour {
     [SerializeField]
     [Tooltip("The bedroom.")]
     private Bedroom fBedroom = null;
+
+    [SerializeField]
+    [Tooltip("The eye transition.")]
+    private Eye fEye = null;
 
     // -- props --
     private Step mStep;
@@ -68,29 +72,43 @@ public class Game: MonoBehaviour {
 
         // run debug setup if enabled
         if (fIsDebug) {
-            StartCoroutine(DebugSetup());
+            StartCoroutine(DebugAsync());
         }
     }
 
-    private IEnumerator DebugSetup() {
+    private IEnumerator DebugAsync() {
         yield return 0;
+
         IdentifyFan(GetComponentInChildren<Fan>());
         PickUp(GetComponentInChildren<Phone>());
-        // StandUp(GetComponentInChildren<Body>());
-        // Open(GetComponentInChildren<Door>());
-        // EnterSheepRoom();
-        // Catch(GetComponentInChildren<Sheep>());
-        // ExitSheepRoom();
+        StandUp(GetComponentInChildren<Body>());
+        fIsDebug = false;
+        ExitBedroom(GetComponentInChildren<BedroomExit>());
+        //
+        // var r1 = GetComponentInChildren<Field>();
+        // DidStartEnterRoom(r1);
+        // DidFinishEnterRoom(r1);
+        // CatchSheep(GetComponentInChildren<Sheep>(true));
+        // ExitField();
         //
         // yield return 0;
         // StandUp(GetComponentInChildren<Body>());
-        // Open(GetComponentInChildren<Door>());
+        // IdentifyMoon(GetComponentInChildren<Moon>(true));
+        // ExitBedroom(GetComponentInChildren<BedroomExit>());
+        //
+        // var r2 = GetComponentInChildren<Kitchen>();
+        // DidStartEnterRoom(r2);
+        // DidFinishEnterRoom(r2);
+        // EatFood(GetComponentInChildren<Food>(true));
+        // ExitKitchen();
+
+        fIsDebug = false;
     }
 
     // -- commands --
     public void Reset() {
         AdvanceToStep(Step.Fan);
-        EnterBedroom((b) => b.WarpToSheep());
+        EnterBedroom((b) => b.ConnectToField());
         fPlayer.SetPhoneTime("1:15 AM");
     }
 
@@ -110,21 +128,26 @@ public class Game: MonoBehaviour {
     }
 
     private void StandUp(Body _) {
-        fPlayer.StandUp();
+        fPlayer.StandUp(isAnimated: !fIsDebug);
         AdvanceStep();
     }
 
-    private void OpenDoor(Door door) {
-        door.Open();
+    private void ExitBedroom(BedroomExit exit) {
+        if (!fIsDebug) {
+            exit.Open();
+        }
+
         AdvanceStep();
     }
 
-    public void EnterSheepRoom() {
-        fBedroom.Hide();
+    private void EnterField(Field room) {
+        StartEnterRoom(room);
     }
 
-    public void ExitSheepRoom() {
-        EnterBedroom((b) => b.WarpToFood());
+    public void ExitField() {
+        fEye.Open();
+        fPlayer.RecenterView();
+        EnterBedroom((b) => b.ConnectToKitchen());
         AdvanceStep();
         fPlayer.SetPhoneTime("2:33 AM");
     }
@@ -134,8 +157,12 @@ public class Game: MonoBehaviour {
         AdvanceStep();
     }
 
-    public void EnterKitchen() {
-        fBedroom.Hide();
+    private void IdentifyMoon(Moon _) {
+        AdvanceStep();
+    }
+
+    private void EnterKitchen(Kitchen room) {
+        StartEnterRoom(room);
     }
 
     private void EatFood(Food food) {
@@ -143,14 +170,25 @@ public class Game: MonoBehaviour {
         AdvanceStep();
     }
 
-    private void ExitKitchen() {
-        EnterBedroom((b) => b.WarpToHall());
+    public void ExitKitchen() {
+        fEye.Open();
+        EnterBedroom((b) => b.ConnectToHall());
         AdvanceStep();
         fPlayer.SetPhoneTime("3:47 AM");
     }
 
-    public void EnterHall() {
+    private void EnterHall(Hall room) {
+        StartEnterRoom(room);
+    }
+
+    private void StartEnterRoom(Room room) {
+        room.EnterStart();
         fBedroom.Hide();
+    }
+
+    private void FinishEnterRoom(Room room) {
+        room.EnterEnd();
+        fBedroom.HideVolume();
     }
 
     // -- commands/step
@@ -174,12 +212,12 @@ public class Game: MonoBehaviour {
     }
 
     // -- queries --
-    public bool IsFree() {
-        return fIsFree;
-    }
-
     public Step GetStep() {
         return mStep;
+    }
+
+    public bool CanAdvancePast(Step step) {
+        return mStep == step;
     }
 
     public bool DidChangeToStep(Step step) {
@@ -199,16 +237,34 @@ public class Game: MonoBehaviour {
                 PickUp(phone); break;
             case Body body:
                 StandUp(body); break;
-            case Door door:
-                OpenDoor(door); break;
+            case BedroomExit exit:
+                ExitBedroom(exit); break;
             case Sheep sheep:
                 CatchSheep(sheep); break;
+            case Moon moon:
+                IdentifyMoon(moon); break;
             case Food food:
                 EatFood(food); break;
-            case ExitKitchen _:
-                ExitKitchen(); break;
             default:
                 Log.Error("Game - Interact w/ Unknown Target: {0}", target); break;
+        }
+    }
+
+    public void DidStartEnterRoom(Room target) {
+        switch (target) {
+            case Field room:
+                EnterField(room); break;
+            case Kitchen room:
+                EnterKitchen(room); break;
+            case Hall room:
+                EnterHall(room); break;
+        }
+    }
+
+    public void DidFinishEnterRoom(Room room) {
+        switch (room) {
+            default:
+                FinishEnterRoom(room); break;
         }
     }
 

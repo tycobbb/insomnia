@@ -1,64 +1,49 @@
-﻿using System;
-using System.Collections;
+﻿using UnityEditor;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 public class Door: MonoBehaviour, Interact.Target {
     // -- constants --
-    private const Game.Step kStep = Game.Step.Door1 | Game.Step.Door2 | Game.Step.Door3;
-    private const float kEnableDelay = 4.5f;
     private const string kOpenAnim = "Open";
     private const string kCloseAnim = "Close";
 
     // -- fields --
     [SerializeField]
-    [Tooltip("The sheep sound.")]
-    private AudioClip fSheepSound;
+    [Tooltip("The audio source. The first source on the component if unset.")]
+    private AudioSource fAudioSource = null;
+
+    [SerializeField]
+    [Tooltip("The audio source. The first source on the component if unset.")]
+    private AudioClip fOpenSound = null;
+
+    [SerializeField]
+    [Tooltip("The audio source. The first source on the component if unset.")]
+    private AudioClip fCloseSound = null;
 
     // -- props --
-    private Interact.OnHover mHover;
     private Animator mAnimator;
-    private AmbientSound mAmbientSound;
 
     // -- lifecycle --
-    protected void Start() {
-        mHover = GetComponentInChildren<Interact.OnHover>();
+    protected void Awake() {
         mAnimator = GetComponent<Animator>();
-        mAmbientSound = GetComponent<AmbientSound>();
-    }
 
-    protected void Update() {
-        // enable on door step
-        var game = Game.Get();
-        if (game.DidChangeToStep(kStep)) {
-            Enable(game.GetStep());
+        if (fAudioSource == null) {
+            fAudioSource = GetComponent<AudioSource>();
         }
     }
 
     // -- commands --
-    private void Enable(Game.Step step) {
-        StartCoroutine(EnableAsync(step));
-    }
-
-    private IEnumerator EnableAsync(Game.Step step) {
-        yield return new WaitForSeconds(kEnableDelay);
-
-        mHover.Reset();
-
-        switch (step) {
-            case Game.Step.Door1:
-                mAmbientSound.Play(fSheepSound); break;
-        }
-    }
-
     public void Open() {
-        mAmbientSound.Stop();
-        // TODO: play door sound
         mAnimator.Play(kOpenAnim);
+        PlaySound(fOpenSound);
     }
 
     public void Close() {
-        // TODO: play door sound
         mAnimator.Play(kCloseAnim);
+        PlaySound(fCloseSound);
+    }
+
+    private void PlaySound(AudioClip clip) {
+        fAudioSource.clip = clip;
+        fAudioSource.Play();
     }
 }
