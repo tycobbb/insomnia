@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 
 public class KitchenExit: MonoBehaviour {
     // -- constants --
+    private const float kEnableDelay = 2.0f;
     private const Game.Step kStep = Game.Step.Exit2;
 
     // -- props --
@@ -21,6 +23,11 @@ public class KitchenExit: MonoBehaviour {
 
     // -- commands --
     private void Enable() {
+        StartCoroutine(EnableAsync());
+    }
+
+    private IEnumerator EnableAsync() {
+        yield return new WaitForSeconds(kEnableDelay);
         mDoor.Open();
     }
 

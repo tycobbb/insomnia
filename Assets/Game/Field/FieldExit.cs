@@ -1,7 +1,9 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public class FieldExit: MonoBehaviour {
     // -- constants --
+    private const float kEnableDelay = 2.0f;
     private const Game.Step kStep = Game.Step.Exit1;
 
     // -- props --
@@ -20,6 +22,11 @@ public class FieldExit: MonoBehaviour {
 
     // -- commands --
     private void Enable() {
+        StartCoroutine(EnableAsync());
+    }
+
+    private IEnumerator EnableAsync() {
+        yield return new WaitForSeconds(kEnableDelay);
         mDoor.Open();
     }
 
