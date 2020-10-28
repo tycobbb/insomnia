@@ -12,10 +12,12 @@ public class Field: MonoBehaviour, Room {
 
     // -- props --
     private RoomPost mPost;
+    private AudioSource mAudio;
 
     // -- lifecycle --
     protected void Awake() {
         mPost = GetComponentInChildren<RoomPost>();
+        mAudio = GetComponent<AudioSource>();
     }
 
     // -- Room --
@@ -30,6 +32,7 @@ public class Field: MonoBehaviour, Room {
 
     public void EnterStart() {
         fSheeps.SetActive(true);
+        mAudio.Play();
     }
 
     public void EnterEnd() {
