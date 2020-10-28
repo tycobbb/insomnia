@@ -31,6 +31,10 @@ namespace Interact {
         [Tooltip("The minimum distance to show the prompt")]
         private float fMinDistance = 20.0f;
 
+        [SerializeField]
+        [Tooltip("The XZ proximity to check when evaluating visibility. Ignored if 0.")]
+        private float fXzProximity = 0.0f;
+
         // -- props --
         private Camera mCamera;
         private GameObject mHovered = null;
@@ -163,24 +167,39 @@ namespace Interact {
 
         // -- queries --
         private GameObject GetHoveredObject() {
-            var screen = mCamera.WorldToScreenPoint(transform.position);
+            var ip = transform.position;
+            var vt = mCamera.transform;
+            var vp = vt.position;
+
+            // get the screen point of the item
+            var screen = mCamera.WorldToScreenPoint(ip);
 
             // check if we're behind the camera
             if (screen.z < 0) {
+                Log.Verbose("OnHover - Behind Camera: {0}", this);
                 return null;
             }
 
             // check if we're in frame
             if (!Screen.safeArea.Contains(screen)) {
-                return null;
+                if (fXzProximity == 0.0f) {
+                    Log.Verbose("OnHover - Outside Frame: {0}", this);
+                    return null;
+                }
+
+                // or if our XZ distance is really close
+                var distance = Vector2.Distance(new Vector2(ip.x, ip.z), new Vector2(vp.x, vp.z));
+                if (distance > fXzProximity) {
+                    Log.Verbose("OnHover - Outsize Proximity: {0} Dist: {1}", this, distance);
+                    return null;
+                }
             }
 
             // check if a spherecast hits this object
-            var t = mCamera.transform;
             var hits = Physics.SphereCastAll(
-                t.position,
+                vp,
                 fRadius,
-                t.forward,
+                vt.forward,
                 fMinDistance
             );
 
@@ -198,6 +217,7 @@ namespace Interact {
                 }
             }
 
+            Log.Verbose("OnHover - Raycast Miss: {0}", this);
             return null;
         }
 

@@ -6,7 +6,8 @@ public static class Log {
         None,
         Error,
         Info,
-        Debug
+        Debug,
+        Verbose,
     }
 
     // -- props --
@@ -30,6 +31,14 @@ public static class Log {
     public static void Debug(string format, params object[] args) {
         #if UNITY_EDITOR
             if (sLevel >= Level.Debug) {
+                U.Debug.LogFormat(format, args);
+            }
+        #endif
+    }
+
+    public static void Verbose(string format, params object[] args) {
+        #if UNITY_EDITOR
+            if (sLevel >= Level.Verbose) {
                 U.Debug.LogFormat(format, args);
             }
         #endif
