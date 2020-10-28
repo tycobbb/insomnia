@@ -85,17 +85,17 @@ public class Game: MonoBehaviour {
         IdentifyFan(GetComponentInChildren<Fan>());
         PickUp(GetComponentInChildren<Phone>());
         StandUp(GetComponentInChildren<Body>());
-        ExitBedroom(GetComponentInChildren<BedroomExit>());
-
-        var r1 = GetComponentInChildren<Field>();
-        DidStartEnterRoom(r1);
-        DidFinishEnterRoom(r1);
-        CatchSheep(GetComponentInChildren<Sheep>(true));
-        ExitField();
-
-        yield return 0;
-        StandUp(GetComponentInChildren<Body>());
-        IdentifyMoon(GetComponentInChildren<Moon>(true));
+        // ExitBedroom(GetComponentInChildren<BedroomExit>());
+        //
+        // var r1 = GetComponentInChildren<Field>();
+        // DidStartEnterRoom(r1);
+        // DidFinishEnterRoom(r1);
+        // CatchSheep(GetComponentInChildren<Sheep>(true));
+        // ExitField();
+        //
+        // yield return 0;
+        // StandUp(GetComponentInChildren<Body>());
+        // IdentifyMoon(GetComponentInChildren<Moon>(true));
         // ExitBedroom(GetComponentInChildren<BedroomExit>());
 
         // var r2 = GetComponentInChildren<Kitchen>();

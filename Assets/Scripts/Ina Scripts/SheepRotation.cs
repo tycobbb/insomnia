@@ -7,8 +7,13 @@ public class SheepRotation : MonoBehaviour
     Transform player;
     GameObject sheep_model;
 
+    public float activeDistance = 7f;
     public float seeDistance = 5f; // 양이 보이기 시작할 범위
     public float turnSpeed = 4f; // 양이 보이기 시작할 범위
+
+    [SerializeField]
+    [Tooltip("If this sheep hides again after becoming visible.")]
+    private bool fHidesOnceActive = true;
 
     private void Start()
     {
@@ -17,21 +22,32 @@ public class SheepRotation : MonoBehaviour
 
         // 양의 첫번째 자식(Base 61) 저장
         sheep_model = transform.GetChild(0).gameObject;
+        sheep_model.SetActive(false);
+        sheep_model.GetComponent<BoxCollider>().enabled = true;
     }
 
-    protected void Update()
-    {
-        // 양과 플레이어의 거리가 distance 이하라면
-        if (Vector3.Distance(transform.position, player.position) <= seeDistance)
-        {
-            // 양 보이도록
-            sheep_model.SetActive(true);
+    protected void Update() {
+        Vector3 sheepPosition = transform.position;
+        Vector3 playerPosition = player.position;
 
+        // get the distance between the sheep and player
+        float distance = Vector3.Distance(sheepPosition, playerPosition);
+
+        // if the player is close, show the sheep
+        bool isActive = distance <= activeDistance;
+        if (isActive || fHidesOnceActive) {
+            // 양 보이도록
+            sheep_model.SetActive(isActive);
+        }
+
+        // 양과 플레이어의 거리가 distance 이하라면
+        if (distance <= seeDistance)
+        {
             // 플레이어를 쳐다볼 때 Y축으로만 회전하도록 고정 (타겟의 y포지션을 양과 같게 하면 y축으로는 회전 안 함)
-            Vector3 targetPosition = new Vector3(player.position.x, transform.position.y, player.position.z);
+            Vector3 targetPosition = new Vector3(playerPosition.x, sheepPosition.y, playerPosition.z);
 
             // 양과 플레이어사이의 거리 구하기
-            Vector3 vec = targetPosition - transform.position;
+            Vector3 vec = targetPosition - sheepPosition;
 
             // 구한 거리를 방향 벡터로 정규화시키기
             vec.Normalize();

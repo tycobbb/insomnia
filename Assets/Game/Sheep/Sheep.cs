@@ -31,7 +31,7 @@ public class Sheep: MonoBehaviour, Interact.Target {
     private IEnumerator Hop() {
         while (mHover.enabled) {
             yield return new WaitForSeconds(3.0f);
-            mBody.velocity = new Vector3(0.0f, 5.0f);
+            mBody.velocity = Vector3.up * 5.0f;
         }
     }
 

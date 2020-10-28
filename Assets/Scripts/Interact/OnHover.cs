@@ -43,7 +43,10 @@ namespace Interact {
             mCamera = Camera.main;
 
             if (fPrompt == null) {
-                fPrompt = transform.GetChild(0).gameObject;
+                var child = transform.GetChild(0);
+                if (child.GetComponent<TextMeshPro>() != null) {
+                    fPrompt = child.gameObject;
+                }
             }
         }
 
