@@ -10,10 +10,8 @@ public class SheepRotation : MonoBehaviour
     public float activeDistance = 7f;
     public float seeDistance = 5f; // 양이 보이기 시작할 범위
     public float turnSpeed = 4f; // 양이 보이기 시작할 범위
-
-    [SerializeField]
-    [Tooltip("If this sheep hides again after becoming visible.")]
-    private bool fHidesOnceActive = true;
+    public bool hasCollisions = true;
+    public bool hidesOnceActive = true;
 
     private void Start()
     {
@@ -22,8 +20,12 @@ public class SheepRotation : MonoBehaviour
 
         // 양의 첫번째 자식(Base 61) 저장
         sheep_model = transform.GetChild(0).gameObject;
+
+        // make sure the models start hidden
         sheep_model.SetActive(false);
-        sheep_model.GetComponent<BoxCollider>().enabled = true;
+
+        // enable the collider if necessary
+        sheep_model.GetComponent<BoxCollider>().enabled = hasCollisions;
     }
 
     protected void Update() {
@@ -35,7 +37,7 @@ public class SheepRotation : MonoBehaviour
 
         // if the player is close, show the sheep
         bool isActive = distance <= activeDistance;
-        if (isActive || fHidesOnceActive) {
+        if (isActive || hidesOnceActive) {
             // 양 보이도록
             sheep_model.SetActive(isActive);
         }
