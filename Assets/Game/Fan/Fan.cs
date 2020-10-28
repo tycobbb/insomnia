@@ -8,10 +8,12 @@ public class Fan: MonoBehaviour, Interact.Target {
 
     // -- props --
     private Interact.OnHover mHover;
+    private AudioSource mSound;
 
     // -- lifecycle --
     protected void Awake() {
         mHover = GetComponent<Interact.OnHover>();
+        mSound = GetComponent<AudioSource>();
     }
 
     protected void Update() {
@@ -33,5 +35,9 @@ public class Fan: MonoBehaviour, Interact.Target {
         if (mHover.enabled && Game.Get().CanAdvancePast(kStep)) {
             mHover.InteractWith(this);
         }
+    }
+
+    public void Silence() {
+        mSound.Stop();
     }
 }

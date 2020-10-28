@@ -16,24 +16,34 @@ public class Bedroom: MonoBehaviour {
     private Hall fHall = null;
 
     [SerializeField]
-    [Tooltip("The hall.")]
+    [Tooltip("The night sky in the window.")]
     private GameObject fNightSky = null;
+
+    [SerializeField]
+    [Tooltip("The nighttime post processing.")]
+    private GameObject mPostNight = null;
+
+    [SerializeField]
+    [Tooltip("The daytime post processing.")]
+    private GameObject mPostDay = null;
+
+    [SerializeField]
+    [Tooltip("The fan.")]
+    private Fan mFan = null;
 
     // -- props --
     private Room mConnected;
     private Door mDoor;
-    private GameObject mVolume;
-    private Vector3 mVolumeOffset;
+    private Vector3 mPostNightOffset;
 
     // -- lifecycle --
     protected void Awake() {
         mDoor = GetComponentInChildren<Door>();
-        mVolume = GetComponentInChildren<PostProcessVolume>().gameObject;
 
         // capture the volume's offset and disassociate it from the bedroom
         // so that we can move it idependently
-        var t = mVolume.transform;
-        mVolumeOffset = t.localPosition;
+        var t = mPostNight.transform;
+        mPostNightOffset = t.localPosition;
         t.parent = transform.parent;
     }
 
@@ -51,7 +61,7 @@ public class Bedroom: MonoBehaviour {
     // -- commands --
     public void Show() {
         gameObject.SetActive(true);
-        mVolume.SetActive(true);
+        mPostNight.SetActive(true);
     }
 
     public void Hide() {
@@ -60,7 +70,7 @@ public class Bedroom: MonoBehaviour {
     }
 
     public void HideVolume() {
-        mVolume.SetActive(false);
+        mPostNight.SetActive(false);
     }
 
     public void ConnectToField() {
@@ -78,7 +88,9 @@ public class Bedroom: MonoBehaviour {
     public void SetDaytime() {
         ConnectToRoom(fField);
         fNightSky.SetActive(false);
-        mVolume.SetActive(false);
+        mPostNight.SetActive(false);
+        mPostDay.SetActive(true);
+        mFan.Silence();
     }
 
     private void ConnectToRoom(Room room) {
@@ -104,6 +116,6 @@ public class Bedroom: MonoBehaviour {
         // move room and hide door
         door.SetActive(false);
         transform.position = position;
-        mVolume.transform.position = position + mVolumeOffset;
+        mPostNight.transform.position = position + mPostNightOffset;
     }
 }

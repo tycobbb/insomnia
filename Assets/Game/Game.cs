@@ -246,6 +246,10 @@ public class Game: MonoBehaviour {
     }
 
     // -- queries --
+    public Vector3 GetPlayerPos() {
+        return fPlayer.transform.position;
+    }
+
     public Step GetStep() {
         return mStep;
     }

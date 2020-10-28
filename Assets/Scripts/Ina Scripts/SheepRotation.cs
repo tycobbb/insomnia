@@ -25,7 +25,10 @@ public class SheepRotation : MonoBehaviour
         sheep_model.SetActive(false);
 
         // enable the collider if necessary
-        sheep_model.GetComponent<BoxCollider>().enabled = hasCollisions;
+        var collider = sheep_model.GetComponent<BoxCollider>();
+        if (collider != null) {
+            collider.enabled = hasCollisions;
+        }
     }
 
     protected void Update() {

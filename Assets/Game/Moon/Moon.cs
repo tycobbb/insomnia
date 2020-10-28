@@ -5,7 +5,7 @@ using UnityEngine;
 public class Moon: MonoBehaviour, Interact.Target {
     // -- constants --
     private const Game.Step kStep = Game.Step.Moon;
-    private const float kEnableDelay = 3.0f;
+    private const float kEnableDelay = 2.0f;
     private const float kAutoInteractDelay = 5.0f;
     private const string kShowMoonAnim = "ShowMoon";
 
