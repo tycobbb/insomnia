@@ -10,10 +10,12 @@ public class Hall : MonoBehaviour, Room {
 
     // -- props --
     private RoomPost mPost;
+    private AmbientSound[] mAmbientSounds;
 
     // -- lifecycle --
     protected void Awake() {
         mPost = GetComponentInChildren<RoomPost>();
+        mAmbientSounds = GetComponentsInChildren<AmbientSound>();
     }
 
     // -- Room --
@@ -25,6 +27,11 @@ public class Hall : MonoBehaviour, Room {
 
     public void EnterStart() {
         fDoorWall.SetActive(true);
+
+        // star playing ambient sounds
+        foreach (var sound in mAmbientSounds) {
+            sound.Play();
+        }
     }
 
     public void EnterEnd() {

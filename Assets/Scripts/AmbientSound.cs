@@ -66,7 +66,7 @@ public class AmbientSound: MonoBehaviour {
     private IEnumerator PlayAsync() {
         while (true) {
             // select a random sound if necessary
-            if (fSounds != null) {
+            if (fSounds != null && fSounds.Length != 0) {
                 fAudioSource.clip = fSounds[Random.Range(0, fSounds.Length)];
             }
 
