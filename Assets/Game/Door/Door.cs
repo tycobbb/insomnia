@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using System.Collections;
+using UnityEditor;
 using UnityEngine;
 
 public class Door: MonoBehaviour, Interact.Target {
@@ -45,5 +46,10 @@ public class Door: MonoBehaviour, Interact.Target {
     private void PlaySound(AudioClip clip) {
         fAudioSource.clip = clip;
         fAudioSource.Play();
+    }
+
+    public IEnumerator PlayOpenSoundAsync() {
+        PlaySound(fOpenSound);
+        yield return new WaitForSeconds(fOpenSound.length);
     }
 }

@@ -64,4 +64,8 @@ public class BedroomExit: MonoBehaviour, Interact.Target {
     public void Close() {
         mDoor.Close();
     }
+
+    public IEnumerator PlayOpenSoundAsync() {
+        return mDoor.PlayOpenSoundAsync();
+    }
 }

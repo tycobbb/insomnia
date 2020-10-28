@@ -62,6 +62,9 @@ public class Game: MonoBehaviour {
 
         // configure services
         Log.SetLevel(fLogLevel);
+
+        // configure ui
+        Cursor.visible = false;
     }
 
     protected void Start() {
@@ -82,22 +85,22 @@ public class Game: MonoBehaviour {
     private IEnumerator DebugAsync() {
         yield return 0;
 
-        IdentifyFan(GetComponentInChildren<Fan>());
-        PickUp(GetComponentInChildren<Phone>());
-        StandUp(GetComponentInChildren<Body>());
-        ExitBedroom(GetComponentInChildren<BedroomExit>());
-
-        var r1 = GetComponentInChildren<Field>();
-        DidStartEnterRoom(r1);
-        DidFinishEnterRoom(r1);
-        CatchSheep(GetComponentInChildren<Sheep>(true));
-        ExitField();
-
-        yield return 0;
-        StandUp(GetComponentInChildren<Body>());
-        IdentifyMoon(GetComponentInChildren<Moon>(true));
+        // IdentifyFan(GetComponentInChildren<Fan>());
+        // PickUp(GetComponentInChildren<Phone>());
+        // StandUp(GetComponentInChildren<Body>());
         // ExitBedroom(GetComponentInChildren<BedroomExit>());
-
+        //
+        // var r1 = GetComponentInChildren<Field>();
+        // DidStartEnterRoom(r1);
+        // DidFinishEnterRoom(r1);
+        // CatchSheep(GetComponentInChildren<Sheep>(true));
+        // ExitField();
+        //
+        // yield return 0;
+        // StandUp(GetComponentInChildren<Body>());
+        // IdentifyMoon(GetComponentInChildren<Moon>(true));
+        // ExitBedroom(GetComponentInChildren<BedroomExit>());
+        //
         // var r2 = GetComponentInChildren<Kitchen>();
         // DidStartEnterRoom(r2);
         // DidFinishEnterRoom(r2);
@@ -139,7 +142,7 @@ public class Game: MonoBehaviour {
 
     private void ExitBedroom(BedroomExit exit) {
         if (mStep == Step.Door4) {
-            Quit();
+            Quit(exit);
             return;
         }
 
@@ -217,7 +220,12 @@ public class Game: MonoBehaviour {
         fBedroom.HideVolume();
     }
 
-    private void Quit() {
+    private void Quit(BedroomExit exit) {
+        StartCoroutine(QuitAsync(exit));
+    }
+
+    private IEnumerator QuitAsync(BedroomExit exit) {
+        yield return exit.PlayOpenSoundAsync();
         Application.Quit();
     }
 
